@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement Drives – IIITApfolio</title>
+    <link rel="stylesheet" href="/styles/placements.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="page-nav">
+        <a href="/" class="nav-brand">
+            <img src="/images/IIITA_Logo.png" style="width:30px;height:25px;" alt=""> IIITApfolio
+        </a>
+        <div class="nav-links">
+            <a href="/home" class="nav-btn"><i class="uil uil-estate"></i> Dashboard</a>
+            <a href="/my-requests" class="nav-btn"><i class="uil uil-file-check-alt"></i> My Requests</a>
+            <a href="/logout" class="nav-btn logout"><i class="uil uil-signout"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="placement-container">
+        <div class="placement-header">
+            <div>
+                <span class="header-eyebrow">Placement Center</span>
+                <h1>Explore Drives</h1>
+            </div>
+            <div class="profile-summary">
+                <div class="profile-stat">
+                    <span class="stat-label">Branch</span>
+                    <span class="stat-value"><%= studentBranch %></span>
+                </div>
+                <div class="profile-stat">
+                    <span class="stat-label">CGPA</span>
+                    <span class="stat-value"><%= studentCgpa %></span>
+                </div>
+                <div class="profile-stat">
+                    <span class="stat-label">Backlogs</span>
+                    <span class="stat-value"><%= studentBacklogs %></span>
+                </div>
+                <div class="profile-stat">
+                    <span class="stat-label">Applied</span>
+                    <span class="stat-value"><%= myApplications.length %></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="showTab(event, 'drives')">
+                <i class="uil uil-building"></i> Available Drives
+            </button>
+            <button class="tab-btn" onclick="showTab(event, 'applications')">
+                <i class="uil uil-file-check-alt"></i> My Applications (<%= myApplications.length %>)
+            </button>
+        </div>
+
+        <!-- Available Drives Tab -->
+        <div id="drives" class="tab-content active">
+            <% if(drives.length === 0){ %>
+            <div class="empty-state">
+                <i class="uil uil-clock-three"></i>
+                <p>No placement drives available right now. Check back later!</p>
+            </div>
+            <% } else { %>
+            <div class="drive-toolbar">
+                <div class="toolbar-search">
+                    <i class="uil uil-search"></i>
+                    <input type="text" id="driveSearch" placeholder="Search company, role, package..." oninput="filterDriveCards()">
+                </div>
+                <select id="driveEligibilityFilter" onchange="filterDriveCards()">
+                    <option value="">All Drives</option>
+                    <option value="eligible">Eligible</option>
+                    <option value="applied">Applied</option>
+                    <option value="ineligible">Not Eligible</option>
+                    <option value="active">Open Now</option>
+                </select>
+            </div>
+            <div class="drives-grid">
+                <% for(var i=0; i<drives.length; i++){ 
+                    var d = drives[i];
+                    var eligBranches = d.eligible_branches.split(',').map(function(b){ return b.trim(); });
+                    var isEligible = eligBranches.includes(studentBranch) && studentCgpa >= parseFloat(d.min_cgpa) && studentBacklogs <= d.max_backlogs;
+                    var alreadyApplied = d.already_applied > 0;
+                %>
+                <div class="drive-card <%= !isEligible ? 'ineligible' : '' %>" data-company="<%= d.company_name %>" data-role="<%= d.role %>" data-status="<%= d.status %>" data-eligible="<%= isEligible ? 'eligible' : 'ineligible' %>" data-applied="<%= alreadyApplied ? 'applied' : '' %>">
+                    <div class="drive-header">
+                        <div class="company-info">
+                            <div class="company-avatar"><%= d.company_name.charAt(0).toUpperCase() %></div>
+                            <div>
+                                <h3><%= d.company_name %></h3>
+                                <span class="role-badge"><%= d.role %></span>
+                            </div>
+                        </div>
+                        <div class="status-stack">
+                            <div class="drive-status status-<%= d.status %>"><%= d.status %></div>
+                            <% if(alreadyApplied){ %>
+                            <span class="quick-state state-applied">Applied</span>
+                            <% } else if(isEligible && d.status === 'active'){ %>
+                            <span class="quick-state state-eligible">Eligible</span>
+                            <% } else if(!isEligible){ %>
+                            <span class="quick-state state-ineligible">Not Eligible</span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="drive-body">
+                        <% if(d.description){ %>
+                        <p class="drive-desc"><%= d.description %></p>
+                        <% } %>
+                        <div class="drive-details">
+                            <div class="detail-item">
+                                <i class="uil uil-money-bill"></i>
+                                <small>Package</small>
+                                <span><%= d.package_lpa || 'Not disclosed' %></span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="uil uil-calendar-alt"></i>
+                                <small>Drive Date</small>
+                                <span><%= d.drive_date ? new Date(d.drive_date).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) : 'TBD' %></span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="uil uil-clock"></i>
+                                <small>Deadline</small>
+                                <span><%= d.last_date_apply ? new Date(d.last_date_apply).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) : 'TBD' %></span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="uil uil-users-alt"></i>
+                                <small>Applicants</small>
+                                <span><%= d.applicant_count %> applied</span>
+                            </div>
+                        </div>
+                        <div class="eligibility-criteria">
+                            <span class="criteria-label">Eligibility:</span>
+                            <span class="criteria-tag <%= studentCgpa >= parseFloat(d.min_cgpa) ? 'met' : 'unmet' %>">
+                                CGPA ≥ <%= d.min_cgpa %>
+                            </span>
+                            <span class="criteria-tag <%= studentBacklogs <= d.max_backlogs ? 'met' : 'unmet' %>">
+                                Backlogs ≤ <%= d.max_backlogs %>
+                            </span>
+                            <% for(var bi=0; bi<eligBranches.length; bi++){ %>
+                            <span class="criteria-tag <%= eligBranches[bi] === studentBranch ? 'met' : '' %>">
+                                <%= eligBranches[bi] %>
+                            </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="drive-footer">
+                        <% if(alreadyApplied){ %>
+                        <button class="btn-applied" disabled><i class="uil uil-check-circle"></i> Applied</button>
+                        <% } else if(!isEligible){ %>
+                        <button class="btn-ineligible" disabled><i class="uil uil-times-circle"></i> Not Eligible</button>
+                        <% } else if(d.status !== 'active'){ %>
+                        <button class="btn-ineligible" disabled><i class="uil uil-clock"></i> Not Open Yet</button>
+                        <% } else { %>
+                        <form action="/apply" method="post" style="display:inline">
+                            <input type="hidden" name="drive_id" value="<%= d.id %>">
+                            <button type="submit" class="btn-apply" onclick="return confirm('Apply to <%= d.company_name %> - <%= d.role %>?')">
+                                <i class="uil uil-rocket"></i> Apply Now
+                            </button>
+                        </form>
+                        <% } %>
+                        <% if(isEligible && d.status === 'active'){ %>
+                        <form action="/resume-analyzer" method="post" enctype="multipart/form-data" class="resume-check-form">
+                            <input type="hidden" name="drive_id" value="<%= d.id %>">
+                            <label class="resume-upload">
+                                <i class="uil uil-file-upload-alt"></i>
+                                <span>1-2 page PDF</span>
+                                <input type="file" name="resume_pdf" accept="application/pdf" onchange="showResumeFileName(this)">
+                            </label>
+                            <button type="button" class="btn-ai-check" onclick="submitResumeCheck(this.form)">
+                                <i class="uil uil-brain"></i> AI Resume Check
+                            </button>
+                        </form>
+                        <% } %>
+                        <% if(d.company_website){ %>
+                        <a href="<%= d.company_website %>" target="_blank" class="btn-website">
+                            <i class="uil uil-external-link-alt"></i> Website
+                        </a>
+                        <% } %>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+            <% } %>
+        </div>
+
+        <!-- My Applications Tab -->
+        <div id="applications" class="tab-content">
+            <% if(myApplications.length === 0){ %>
+            <div class="empty-state">
+                <i class="uil uil-file-search-alt"></i>
+                <p>You haven't applied to any drives yet. Browse available drives and apply!</p>
+            </div>
+            <% } else { %>
+            <div class="drive-toolbar">
+                <div class="toolbar-search">
+                    <i class="uil uil-search"></i>
+                    <input type="text" id="applicationSearch" placeholder="Search company or role..." oninput="filterApplications()">
+                </div>
+                <select id="applicationStatusFilter" onchange="filterApplications()">
+                    <option value="">All Statuses</option>
+                    <option value="applied">Applied</option>
+                    <option value="shortlisted">Shortlisted</option>
+                    <option value="selected">Selected</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+            <div class="apps-table-wrap">
+                <table class="apps-table">
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Role</th>
+                            <th>Package</th>
+                            <th>Drive Date</th>
+                            <th>Status</th>
+                            <th>Applied On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(var i=0; i<myApplications.length; i++){ 
+                            var app = myApplications[i];
+                            var statusOrder = ['applied', 'shortlisted', 'selected'];
+                            var statusIndex = statusOrder.indexOf(app.status);
+                            var isRejected = app.status === 'rejected';
+                            if(statusIndex < 0) statusIndex = 0;
+                        %>
+                        <tr data-status="<%= app.status %>">
+                            <td><strong><%= app.company_name %></strong></td>
+                            <td><%= app.role %></td>
+                            <td><%= app.package_lpa || '-' %></td>
+                            <td><%= app.drive_date ? new Date(app.drive_date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : 'TBD' %></td>
+                            <td>
+                                <span class="app-status app-<%= app.status %>"><%= app.status %></span>
+                                <div class="status-timeline <%= isRejected ? 'timeline-rejected' : '' %>">
+                                    <div class="timeline-step done">
+                                        <span class="timeline-dot"><i class="uil uil-check"></i></span>
+                                        <small>Applied</small>
+                                    </div>
+                                    <div class="timeline-line <%= statusIndex >= 1 && !isRejected ? 'done' : '' %>"></div>
+                                    <div class="timeline-step <%= statusIndex >= 1 && !isRejected ? 'done' : '' %>">
+                                        <span class="timeline-dot"><i class="uil uil-check"></i></span>
+                                        <small>Shortlisted</small>
+                                    </div>
+                                    <div class="timeline-line <%= statusIndex >= 2 && !isRejected ? 'done' : isRejected ? 'rejected' : '' %>"></div>
+                                    <div class="timeline-step <%= statusIndex >= 2 && !isRejected ? 'done' : isRejected ? 'rejected' : '' %>">
+                                        <span class="timeline-dot"><i class="uil <%= isRejected ? 'uil-times' : 'uil-check' %>"></i></span>
+                                        <small><%= isRejected ? 'Rejected' : 'Selected' %></small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><%= new Date(app.applied_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) %></td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
+        function showTab(event, tabId) {
+            document.querySelectorAll('.tab-content').forEach(function(t){ t.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function filterDriveCards(){
+            var q = document.getElementById('driveSearch').value.toLowerCase();
+            var filter = document.getElementById('driveEligibilityFilter').value;
+            document.querySelectorAll('.drive-card').forEach(function(card){
+                var text = card.textContent.toLowerCase();
+                var matchesText = text.includes(q);
+                var matchesFilter = !filter;
+                if(filter === 'eligible') matchesFilter = card.getAttribute('data-eligible') === 'eligible' && !card.getAttribute('data-applied');
+                if(filter === 'applied') matchesFilter = card.getAttribute('data-applied') === 'applied';
+                if(filter === 'ineligible') matchesFilter = card.getAttribute('data-eligible') === 'ineligible';
+                if(filter === 'active') matchesFilter = card.getAttribute('data-status') === 'active';
+                card.style.display = matchesText && matchesFilter ? '' : 'none';
+            });
+        }
+
+        function filterApplications(){
+            var q = document.getElementById('applicationSearch').value.toLowerCase();
+            var status = document.getElementById('applicationStatusFilter').value;
+            document.querySelectorAll('.apps-table tbody tr').forEach(function(row){
+                var matchesText = row.textContent.toLowerCase().includes(q);
+                var matchesStatus = !status || row.getAttribute('data-status') === status;
+                row.style.display = matchesText && matchesStatus ? '' : 'none';
+            });
+        }
+
+        function showResumeFileName(input){
+            var label = input.closest('.resume-upload');
+            var text = label ? label.querySelector('span') : null;
+            if(text && input.files && input.files[0]){
+                text.textContent = input.files[0].name;
+            }
+        }
+
+        function submitResumeCheck(form){
+            console.log('[resume-analyzer] submit clicked', form.action);
+            var fileInput = form.querySelector('input[type="file"]');
+            if(!fileInput || !fileInput.files || !fileInput.files[0]){
+                alert('Please choose a resume PDF first.');
+                return false;
+            }
+            var file = fileInput.files[0];
+            if(file.type && file.type !== 'application/pdf'){
+                alert('Please upload a PDF file.');
+                return false;
+            }
+            var button = form.querySelector('.btn-ai-check');
+            if(button){
+                button.disabled = true;
+                button.innerHTML = '<i class="uil uil-spinner-alt"></i> Checking...';
+            }
+            form.submit();
+            return false;
+        }
+    </script>
+</body>
+</html>

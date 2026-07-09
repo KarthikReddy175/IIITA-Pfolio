@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students & Analytics – Admin | IIITApfolio</title>
+    <link rel="stylesheet" href="/styles/admin_manage.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="page-nav">
+        <a href="/" class="nav-brand"><i class="uil uil-university"></i> IIITApfolio</a>
+        <div class="nav-links">
+            <a href="/adminlog" class="nav-btn"><i class="uil uil-tachometer-fast-alt"></i> Dashboard</a>
+            <a href="/adminlog#companies" class="nav-btn"><i class="uil uil-building"></i> Companies</a>
+            <a href="/adminlog#drives" class="nav-btn"><i class="uil uil-briefcase"></i> Drives</a>
+            <a href="/alogout" class="nav-btn logout"><i class="uil uil-signout"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <div class="page-header">
+            <h1><i class="uil uil-chart-pie"></i> Placement Analytics & Students</h1>
+        </div>
+
+        <!-- Hero Stats -->
+        <div class="hero-stats-row">
+            <div class="hero-stat-card hero-blue">
+                <div class="hero-stat-icon"><i class="uil uil-users-alt"></i></div>
+                <div class="hero-stat-info">
+                    <span class="hero-stat-val"><%= totalStudents %></span>
+                    <span class="hero-stat-label">Total Students</span>
+                </div>
+            </div>
+            <div class="hero-stat-card hero-green">
+                <div class="hero-stat-icon"><i class="uil uil-check-circle"></i></div>
+                <div class="hero-stat-info">
+                    <span class="hero-stat-val"><%= placedStudents %></span>
+                    <span class="hero-stat-label">Placed</span>
+                </div>
+            </div>
+            <div class="hero-stat-card hero-amber">
+                <div class="hero-stat-icon"><i class="uil uil-percentage"></i></div>
+                <div class="hero-stat-info">
+                    <span class="hero-stat-val"><%= totalStudents > 0 ? Math.round(placedStudents/totalStudents*100) : 0 %>%</span>
+                    <span class="hero-stat-label">Placement Rate</span>
+                </div>
+            </div>
+            <% for(var i=0; i<branchStats.length; i++){ %>
+            <div class="hero-stat-card">
+                <div class="hero-stat-icon"><i class="uil uil-graduation-cap"></i></div>
+                <div class="hero-stat-info">
+                    <span class="hero-stat-val"><%= branchStats[i].count %></span>
+                    <span class="hero-stat-label"><%= branchStats[i].branch %> (Avg: <%= branchStats[i].avg_cgpa || '-' %>)</span>
+                </div>
+            </div>
+            <% } %>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-row">
+            <div class="chart-card-admin">
+                <div class="chart-card-header">
+                    <h3><i class="uil uil-chart-pie-alt"></i> Placement Overview</h3>
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="placementChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card-admin">
+                <div class="chart-card-header">
+                    <h3><i class="uil uil-chart-bar"></i> Branch-wise Students</h3>
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="branchChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <% if(driveStats.length > 0 || appStats.length > 0){ %>
+        <div class="charts-row">
+            <% if(driveStats.length > 0){ %>
+            <div class="chart-card-admin">
+                <div class="chart-card-header">
+                    <h3><i class="uil uil-briefcase"></i> Drive Status</h3>
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="driveChart"></canvas>
+                </div>
+            </div>
+            <% } %>
+            <% if(appStats.length > 0){ %>
+            <div class="chart-card-admin">
+                <div class="chart-card-header">
+                    <h3><i class="uil uil-file-check-alt"></i> Application Pipeline</h3>
+                </div>
+                <div class="chart-card-body">
+                    <canvas id="appChart"></canvas>
+                </div>
+            </div>
+            <% } %>
+        </div>
+        <% } %>
+
+        <!-- Filter Section -->
+        <div class="filter-card">
+            <h3><i class="uil uil-filter"></i> Filter Students</h3>
+            <form action="/admin/students" method="get" class="filter-form">
+                <div class="filter-group">
+                    <label>Min CGPA</label>
+                    <input type="number" step="0.01" min="0" max="10" name="min_cgpa" value="<%= filters.min_cgpa %>" placeholder="e.g. 7.00">
+                </div>
+                <div class="filter-group">
+                    <label>Max Backlogs</label>
+                    <input type="number" min="0" name="max_backlogs" value="<%= filters.max_backlogs %>" placeholder="e.g. 0">
+                </div>
+                <div class="filter-group">
+                    <label>Branch</label>
+                    <select name="branch">
+                        <option value="all" <%= filters.branch === 'all' ? 'selected' : '' %>>All Branches</option>
+                        <option value="IT" <%= filters.branch === 'IT' ? 'selected' : '' %>>IT</option>
+                        <option value="ECE" <%= filters.branch === 'ECE' ? 'selected' : '' %>>ECE</option>
+                        <option value="IT-BI" <%= filters.branch === 'IT-BI' ? 'selected' : '' %>>IT-BI</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Batch</label>
+                    <input type="text" name="batch" value="<%= filters.batch !== 'all' ? filters.batch : '' %>" placeholder="e.g. 2022" maxlength="4">
+                </div>
+                <button type="submit" class="btn-primary"><i class="uil uil-search"></i> Filter</button>
+                <a href="/admin/students" class="btn-secondary">Clear</a>
+            </form>
+        </div>
+
+        <!-- Students Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <h3><i class="uil uil-users-alt"></i> <%= students.length %> student(s) found</h3>
+                <input type="text" id="tableSearch" placeholder="Search by name or email..." class="table-search-input" oninput="filterTable()">
+            </div>
+            <% if(students.length === 0){ %>
+            <div class="empty-state" style="box-shadow:none;">
+                <i class="uil uil-search-minus"></i>
+                <p>No students match the current filters.</p>
+            </div>
+            <% } else { %>
+            <div class="table-responsive">
+                <table id="studentsTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Branch</th>
+                            <th>Batch</th>
+                            <th>Semester</th>
+                            <th>CGPA</th>
+                            <th>Backlogs</th>
+                            <th>Phone</th>
+                            <th>10th</th>
+                            <th>12th</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(var i=0; i<students.length; i++){ var s = students[i]; %>
+                        <tr>
+                            <td class="row-num"><%= i+1 %></td>
+                            <td><strong><%= s.name %></strong></td>
+                            <td>
+                                <a href="#" onclick="event.preventDefault(); document.getElementById('search-form-<%= i %>').submit();" class="email-link"><%= s.email %></a>
+                                <form id="search-form-<%= i %>" action="/search" method="post" style="display:none">
+                                    <input type="hidden" name="id" value="<%= s.email %>">
+                                </form>
+                            </td>
+                            <td><span class="branch-tag"><%= s.branch %></span></td>
+                            <td><%= s.batch || '-' %></td>
+                            <td><%= s.cur_sem %></td>
+                            <td>
+                                <span class="cgpa-badge <% if(s.cur_cgpa >= 9) { %>cgpa-high<% } else if(s.cur_cgpa >= 7) { %>cgpa-mid<% } else { %>cgpa-low<% } %>">
+                                    <%= s.cur_cgpa || '-' %>
+                                </span>
+                            </td>
+                            <td>
+                                <% if(s.backlogs != null && s.backlogs > 0) { %>
+                                <span class="backlog-badge"><%= s.backlogs %></span>
+                                <% } else { %>
+                                <span class="no-backlog"><%= s.backlogs != null ? s.backlogs : '-' %></span>
+                                <% } %>
+                            </td>
+                            <td><%= s.phone %></td>
+                            <td><%= s.ten_marks %></td>
+                            <td><%= s.twelve_marks %></td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
+    // Table search filter
+    function filterTable() {
+        var input = document.getElementById('tableSearch').value.toLowerCase();
+        var rows = document.querySelectorAll('#studentsTable tbody tr');
+        rows.forEach(function(row) {
+            var text = row.textContent.toLowerCase();
+            row.style.display = text.includes(input) ? '' : 'none';
+        });
+    }
+
+    // Charts
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.font.size = 12;
+    Chart.defaults.plugins.legend.labels.usePointStyle = true;
+
+    // Placement Doughnut
+    new Chart(document.getElementById('placementChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Placed', 'Not Placed'],
+            datasets: [{
+                data: [<%= placedStudents %>, <%= totalStudents - placedStudents %>],
+                backgroundColor: ['#10b981', '#e5e7eb'],
+                borderWidth: 0, hoverOffset: 10
+            }]
+        },
+        options: {
+            cutout: '65%', responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { padding: 16 } }
+            }
+        }
+    });
+
+    // Branch Bar
+    new Chart(document.getElementById('branchChart'), {
+        type: 'bar',
+        data: {
+            labels: [<% for(var b=0;b<branchStats.length;b++){%>'<%=branchStats[b].branch%>'<%if(b<branchStats.length-1){%>,<%}%><%}%>],
+            datasets: [
+                {
+                    label: 'Students',
+                    data: [<% for(var b=0;b<branchStats.length;b++){%><%=branchStats[b].count%><%if(b<branchStats.length-1){%>,<%}%><%}%>],
+                    backgroundColor: ['#4361ee', '#f59e0b', '#8b5cf6'],
+                    borderRadius: 8, borderSkipped: false, barThickness: 40
+                },
+                {
+                    label: 'Avg CGPA',
+                    data: [<% for(var b=0;b<branchStats.length;b++){%><%=branchStats[b].avg_cgpa || 0%><%if(b<branchStats.length-1){%>,<%}%><%}%>],
+                    type: 'line', borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)',
+                    pointBackgroundColor: '#ef4444', pointRadius: 5, yAxisID: 'y1',
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } },
+            scales: {
+                y: { beginAtZero: true, grid: { color: '#f3f4f6' }, title: { display: true, text: 'Count' } },
+                y1: { position: 'right', min: 0, max: 10, grid: { display: false }, title: { display: true, text: 'CGPA' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    <% if(driveStats.length > 0){ %>
+    new Chart(document.getElementById('driveChart'), {
+        type: 'doughnut',
+        data: {
+            labels: [<% for(var d=0;d<driveStats.length;d++){%>'<%=driveStats[d].status%>'<%if(d<driveStats.length-1){%>,<%}%><%}%>],
+            datasets: [{
+                data: [<% for(var d=0;d<driveStats.length;d++){%><%=driveStats[d].count%><%if(d<driveStats.length-1){%>,<%}%><%}%>],
+                backgroundColor: ['#f59e0b','#10b981','#8b5cf6','#ef4444'],
+                borderWidth: 0, hoverOffset: 8
+            }]
+        },
+        options: {
+            cutout: '55%', responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { padding: 14 } } }
+        }
+    });
+    <% } %>
+
+    <% if(appStats.length > 0){ %>
+    new Chart(document.getElementById('appChart'), {
+        type: 'polarArea',
+        data: {
+            labels: [<% for(var a=0;a<appStats.length;a++){%>'<%=appStats[a].status%>'<%if(a<appStats.length-1){%>,<%}%><%}%>],
+            datasets: [{
+                data: [<% for(var a=0;a<appStats.length;a++){%><%=appStats[a].count%><%if(a<appStats.length-1){%>,<%}%><%}%>],
+                backgroundColor: ['rgba(67,97,238,0.6)','rgba(245,158,11,0.6)','rgba(16,185,129,0.6)','rgba(239,68,68,0.6)'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { padding: 14 } } }
+        }
+    });
+    <% } %>
+    </script>
+</body>
+</html>

@@ -1,0 +1,715 @@
+/* ========================================
+   IIITApfolio – Student Dashboard
+   Modern, clean design
+   ======================================== */
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #1a1a2e;
+    background: #f0f2f5;
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== TOP NAVBAR ===== */
+.top-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 64px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.nav-left .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #1a1a2e;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+.nav-left .nav-brand img {
+    width: 36px;
+    height: 30px;
+}
+.nav-center {
+    display: flex;
+    gap: 4px;
+}
+.nav-center .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.nav-center .nav-link:hover {
+    background: #f5f6fa;
+    color: #4361ee;
+}
+.nav-center .nav-link.active {
+    background: #eef0ff;
+    color: #4361ee;
+    font-weight: 600;
+}
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.nav-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #e0e0e0;
+    transition: border-color 0.2s;
+}
+.nav-avatar:hover {
+    border-color: #4361ee;
+}
+
+/* ===== PROFILE DROPDOWN ===== */
+.profile-wrapper {
+    position: relative;
+}
+#profile-icon {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+#profile-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 48px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    min-width: 220px;
+    z-index: 2000;
+    overflow: hidden;
+    animation: fadeDown 0.15s ease;
+}
+@keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.profile-dd-header {
+    padding: 14px 18px;
+    background: #f8f9fc;
+}
+.profile-dd-header strong {
+    display: block;
+    font-size: 14px;
+    color: #1a1a2e;
+}
+.profile-dd-header span {
+    font-size: 12px;
+    color: #888;
+}
+.profile-dd-divider {
+    height: 1px;
+    background: #f0f0f0;
+}
+#profile-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 18px;
+    color: #444;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+#profile-dropdown a:hover {
+    background: #f5f7fa;
+    color: #4361ee;
+}
+#profile-dropdown a.danger-link:hover {
+    background: #fff5f5;
+    color: #c62828;
+}
+#profile-dropdown a i {
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+}
+.profile-wrapper.open #profile-dropdown {
+    display: block;
+}
+
+/* ===== DASHBOARD CONTAINER ===== */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 24px auto;
+    padding: 0 24px;
+}
+
+/* ===== PROFILE CARD (Left) ===== */
+.profile-card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+}
+.profile-card-header {
+    background: linear-gradient(135deg, #f8f9ff 0%, #12052e 100%);
+    padding: 28px 24px 20px;
+    text-align: center;
+    color: #fff;
+}
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.4);
+    margin-bottom: 12px;
+}
+.profile-card-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+.role-tag {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 3px 12px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+.profile-card-body {
+    padding: 20px 24px;
+}
+.about-text {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+.info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+.info-item > i {
+    font-size: 18px;
+    color: #4361ee;
+    margin-top: 2px;
+    width: 20px;
+    text-align: center;
+}
+.info-item label {
+    display: block;
+    font-size: 11px;
+    color: #999;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1px;
+}
+.info-item span {
+    font-size: 13px;
+    color: #333;
+    font-weight: 500;
+}
+.marks-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+}
+.mark-chip {
+    flex: 1;
+    text-align: center;
+    padding: 10px 8px;
+    background: #f8f9fc;
+    border-radius: 10px;
+    border: 1px solid #eef0f5;
+}
+.mark-chip.highlight {
+    background: #eef0ff;
+    border-color: #c7d0ff;
+}
+.mark-label {
+    display: block;
+    font-size: 10px;
+    color: #999;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.mark-value {
+    display: block;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-top: 2px;
+}
+.mark-chip.highlight .mark-value {
+    color: #4361ee;
+}
+.profile-card-footer {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid #f0f0f0;
+}
+.social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 16px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.social-btn.linkedin {
+    background: #e8f4fd;
+    color: #0077b5;
+}
+.social-btn.linkedin:hover {
+    background: #0077b5;
+    color: #fff;
+}
+.social-btn.github {
+    background: #f0f0f0;
+    color: #333;
+}
+.social-btn.github:hover {
+    background: #333;
+    color: #fff;
+}
+
+/* ===== CARD SECTION (Generic) ===== */
+.card-section {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+.card-section-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid #f0f0f0;
+}
+.card-section-header h4 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a2e;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.card-section-header h4 i {
+    color: #4361ee;
+}
+
+/* ===== SKILL BADGES ===== */
+.skill-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 18px 24px;
+}
+.skill-badge {
+    background: linear-gradient(135deg, #e8f0fe 0%, #f0e8ff 100%);
+    color: #4361ee;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* ===== TAB BAR ===== */
+.tab-bar {
+    display: flex;
+    gap: 4px;
+    padding: 14px 20px 0;
+    border-bottom: 1px solid #f0f0f0;
+    overflow-x: auto;
+}
+.tab-btn {
+    padding: 10px 18px;
+    border: none;
+    background: none;
+    color: #888;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+.tab-btn:hover {
+    color: #4361ee;
+}
+.tab-btn.active {
+    color: #4361ee;
+    border-bottom-color: #4361ee;
+}
+.tab-btn i {
+    font-size: 16px;
+}
+
+/* ===== TAB PANES ===== */
+.tab-pane {
+    display: none;
+    padding: 20px 24px;
+}
+.tab-pane.active {
+    display: block;
+}
+
+/* ===== SECTION BLOCKS ===== */
+.section-block {
+    margin-bottom: 24px;
+}
+.section-block h5 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.section-block h5 i {
+    color: #4361ee;
+    font-size: 18px;
+}
+
+/* ===== STAT CARDS ===== */
+.detail-cards-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    min-width: 140px;
+    padding: 16px 18px;
+    background: #f8f9fc;
+    border-radius: 12px;
+    border: 1px solid #eef0f5;
+}
+.stat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+.stat-icon.green { background: #e8f5e9; color: #2e7d32; }
+.stat-icon.red { background: #ffebee; color: #c62828; }
+.stat-icon.blue { background: #e3f2fd; color: #1565c0; }
+.stat-icon.orange { background: #fff3e0; color: #ef6c00; }
+.stat-icon.purple { background: #f3e5f5; color: #7b1fa2; }
+.stat-title {
+    font-size: 11px;
+    color: #999;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.stat-val {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a2e;
+    display: block;
+}
+
+/* ===== LIST CHIPS ===== */
+.item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.list-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: #f8f9fc;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    border: 1px solid #eef0f5;
+}
+.list-chip i {
+    color: #4361ee;
+    font-size: 16px;
+}
+.empty-text {
+    color: #bbb;
+    font-size: 13px;
+    font-style: italic;
+    padding: 12px 0;
+}
+
+/* ===== PROJECT CARDS ===== */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+}
+.project-card {
+    padding: 16px;
+    background: #f8f9fc;
+    border-radius: 12px;
+    border: 1px solid #eef0f5;
+    transition: all 0.2s;
+}
+.project-card:hover {
+    border-color: #c7d0ff;
+    box-shadow: 0 4px 12px rgba(67,97,238,0.08);
+}
+.proj-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.proj-name i { color: #4361ee; }
+.proj-tech {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 8px;
+}
+.proj-link {
+    font-size: 12px;
+    color: #4361ee;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.proj-link:hover { text-decoration: underline; }
+
+/* ===== CODING PROFILES ===== */
+.coding-profiles {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.profile-link-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: #f8f9fc;
+    border-radius: 10px;
+    border: 1px solid #eef0f5;
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+.profile-link-card:hover {
+    background: #eef0ff;
+    border-color: #c7d0ff;
+    color: #4361ee;
+    text-decoration: none;
+}
+.profile-link-card i:first-child { color: #4361ee; font-size: 20px; }
+.profile-link-card .link-arrow { margin-left: auto; font-size: 16px; opacity: 0.5; }
+.profile-link-card:hover .link-arrow { opacity: 1; }
+
+/* ===== INTERNSHIP CARDS ===== */
+.internship-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.intern-card {
+    padding: 16px 18px;
+    background: #f8f9fc;
+    border-radius: 12px;
+    border: 1px solid #eef0f5;
+    border-left: 3px solid #4361ee;
+}
+.intern-company {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a2e;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+.intern-company i { color: #4361ee; }
+.intern-duration {
+    font-size: 12px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+.intern-work {
+    font-size: 13px;
+    color: #555;
+}
+
+/* ===== EDIT GRID ===== */
+.tab-desc {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 18px;
+}
+.edit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+}
+.edit-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    background: #f8f9fc;
+    border: 1px solid #eef0f5;
+    border-radius: 14px;
+    text-decoration: none;
+    color: #333;
+    font-size: 13px;
+    font-weight: 600;
+    gap: 12px;
+    transition: all 0.2s;
+}
+.edit-card:hover {
+    border-color: #c7d0ff;
+    background: #eef0ff;
+    color: #4361ee;
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(67,97,238,0.1);
+}
+.edit-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+.edit-icon.blue { background: #e3f2fd; color: #1565c0; }
+.edit-icon.green { background: #e8f5e9; color: #2e7d32; }
+.edit-icon.orange { background: #fff3e0; color: #ef6c00; }
+.edit-icon.purple { background: #f3e5f5; color: #7b1fa2; }
+.edit-icon.red { background: #ffebee; color: #c62828; }
+.reset-card {
+    border-color: #ffcdd2;
+    background: #fffafa;
+}
+.reset-card:hover {
+    border-color: #ef9a9a;
+    background: #ffebee;
+    color: #c62828;
+}
+
+/* ===== ALERT BANNER ===== */
+.alert-banner {
+    padding: 12px 18px;
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 10px;
+    color: #f57f17;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.alert-banner i {
+    font-size: 18px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .top-navbar {
+        padding: 0 16px;
+        height: 56px;
+    }
+    .nav-center {
+        display: none;
+    }
+    .nav-left .nav-brand span {
+        display: none;
+    }
+    .dashboard-container {
+        padding: 0 12px;
+        margin: 16px auto;
+    }
+    .tab-bar {
+        padding: 10px 14px 0;
+    }
+    .tab-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    .tab-pane {
+        padding: 16px;
+    }
+    .detail-cards-row {
+        flex-direction: column;
+    }
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
+    .edit-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .marks-row {
+        flex-wrap: wrap;
+    }
+}

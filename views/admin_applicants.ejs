@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applicants – <%= drive.company_name %> | IIITApfolio</title>
+    <link rel="stylesheet" href="/styles/admin_manage.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="page-nav">
+        <a href="/" class="nav-brand"><i class="uil uil-university"></i> IIITApfolio</a>
+        <div class="nav-links">
+            <a href="/adminlog#drives" class="nav-btn"><i class="uil uil-arrow-left"></i> Back to Drives</a>
+            <a href="/adminlog#students" class="nav-btn"><i class="uil uil-users-alt"></i> Students</a>
+            <a href="/alogout" class="nav-btn logout"><i class="uil uil-signout"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <!-- Drive Header -->
+        <div class="drive-header-card">
+            <div class="drive-header-left">
+                <h1><%= drive.company_name %></h1>
+                <p class="drive-header-role"><%= drive.role %></p>
+                <div class="drive-header-meta">
+                    <span><i class="uil uil-money-bill"></i> <%= drive.package_lpa || 'N/A' %></span>
+                    <span><i class="uil uil-award"></i> CGPA ≥ <%= drive.min_cgpa %></span>
+                    <span><i class="uil uil-times-circle"></i> Backlogs ≤ <%= drive.max_backlogs %></span>
+                    <span><i class="uil uil-users-alt"></i> <%= applicants.length %> applicant(s)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Applicant Stats -->
+        <% 
+        var totalApplied = applicants.length;
+        var shortlistedOnly = applicants.filter(function(a){ return a.status === 'shortlisted'; }).length;
+        var selected = applicants.filter(function(a){ return a.status === 'selected'; }).length;
+        var rejected = applicants.filter(function(a){ return a.status === 'rejected'; }).length;
+        var shortlisted = shortlistedOnly + selected + rejected;
+        %>
+
+        <% if(applicants.length > 0){ %>
+        <!-- Pipeline Visualization -->
+        <div class="pipeline-card">
+            <h3><i class="uil uil-sitemap"></i> Selection Pipeline</h3>
+            <div class="pipeline-flow">
+                <div class="pipeline-stage stage-total">
+                    <span class="stage-count"><%= totalApplied %></span>
+                    <span class="stage-label">Total Applied</span>
+                    <span class="stage-note">All submitted applications</span>
+                </div>
+                <div class="stage-arrow"><i class="uil uil-arrow-right"></i></div>
+                <div class="pipeline-stage stage-shortlisted">
+                    <span class="stage-count"><%= shortlisted %></span>
+                    <span class="stage-label">Shortlisted</span>
+                    <span class="stage-note">Moved forward</span>
+                </div>
+                <div class="branch-connector">
+                    <span class="branch-line"></span>
+                    <span class="branch-node"></span>
+                    <span class="branch-line"></span>
+                </div>
+                <div class="pipeline-outcomes">
+                    <div class="pipeline-stage stage-selected">
+                        <span class="stage-count"><%= selected %></span>
+                        <span class="stage-label">Selected</span>
+                        <span class="stage-note">From shortlisted</span>
+                    </div>
+                    <div class="pipeline-stage stage-rejected">
+                        <span class="stage-count"><%= rejected %></span>
+                        <span class="stage-label">Rejected</span>
+                        <span class="stage-note">From shortlisted</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% } %>
+
+        <!-- Applicants Table -->
+        <% if(applicants.length === 0){ %>
+        <div class="empty-state">
+            <i class="uil uil-users-alt"></i>
+            <h3>No Applicants</h3>
+            <p>No applications received yet for this drive.</p>
+        </div>
+        <% } else { %>
+        <div class="table-card">
+            <div class="table-header">
+                <h3><i class="uil uil-users-alt"></i> All Applicants</h3>
+                <input type="text" id="tableSearch" placeholder="Search..." class="table-search-input" oninput="filterTable()">
+            </div>
+            <div class="table-responsive">
+                <table id="applicantsTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Branch</th>
+                            <th>CGPA</th>
+                            <th>Backlogs</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(var i=0; i<applicants.length; i++){ var a = applicants[i]; %>
+                        <tr>
+                            <td class="row-num"><%= i+1 %></td>
+                            <td><strong><%= a.name %></strong></td>
+                            <td class="email-link"><%= a.email %></td>
+                            <td><span class="branch-tag"><%= a.branch %></span></td>
+                            <td>
+                                <span class="cgpa-badge <% if(a.cur_cgpa >= 9) { %>cgpa-high<% } else if(a.cur_cgpa >= 7) { %>cgpa-mid<% } else { %>cgpa-low<% } %>">
+                                    <%= a.cur_cgpa || '-' %>
+                                </span>
+                            </td>
+                            <td><%= a.backlogs != null ? a.backlogs : '-' %></td>
+                            <td><%= a.phone %></td>
+                            <td><span class="app-status-badge app-<%= a.status %>"><%= a.status %></span></td>
+                            <td>
+                                <form action="/admin/applicant/status" method="post" style="display:inline">
+                                    <input type="hidden" name="app_id" value="<%= a.id %>">
+                                    <input type="hidden" name="drive_id" value="<%= drive.id %>">
+                                    <select name="status" onchange="if(confirm('Change to '+this.value+'?')) this.form.submit(); else this.value='<%= a.status %>';" class="status-select-sm">
+                                        <option value="applied" <%= a.status === 'applied' ? 'selected' : '' %>>Applied</option>
+                                        <option value="shortlisted" <%= a.status === 'shortlisted' ? 'selected' : '' %>>Shortlisted</option>
+                                        <option value="selected" <%= a.status === 'selected' ? 'selected' : '' %>>Selected</option>
+                                        <option value="rejected" <%= a.status === 'rejected' ? 'selected' : '' %>>Rejected</option>
+                                    </select>
+                                </form>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <% } %>
+    </div>
+
+    <script>
+    function filterTable() {
+        var input = document.getElementById('tableSearch').value.toLowerCase();
+        var rows = document.querySelectorAll('#applicantsTable tbody tr');
+        rows.forEach(function(row) {
+            row.style.display = row.textContent.toLowerCase().includes(input) ? '' : 'none';
+        });
+    }
+
+    </script>
+</body>
+</html>

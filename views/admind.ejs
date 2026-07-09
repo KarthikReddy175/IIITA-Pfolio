@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/admind.css">
+    <link rel="stylesheet" href="/styles/notifications.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <title>Admin Dashboard | IIITAPfolio</title>
+</head>
+<body>
+    <%
+    companies = typeof companies !== 'undefined' ? companies : [];
+    drives = typeof drives !== 'undefined' ? drives : [];
+    branchPlacementStats = typeof branchPlacementStats !== 'undefined' ? branchPlacementStats : [];
+    batchStats = typeof batchStats !== 'undefined' ? batchStats : [];
+    changeRequests = typeof changeRequests !== 'undefined' ? changeRequests : message;
+    %>
+    <nav>
+        <div class="logo-name">
+            <div class="logo-image">
+                <img src="images/IIITA_Logo.png" alt="">
+            </div>
+            <span class="logo_name">IIITAPfolio</span>
+        </div>
+
+        <div class="menu-items">
+            <ul class="nav-links">
+                <li>
+                    <a href="#overview" onclick="showSection('overview'); return false;" class="nav-active" id="nav-overview">
+                        <i class="uil uil-estate"></i>
+                        <span class="link-name">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#placements" onclick="showSection('placements'); return false;" id="nav-placements">
+                        <i class="uil uil-chart-growth"></i>
+                        <span class="link-name">Placements</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#companies" onclick="showSection('companies'); return false;" id="nav-companies">
+                        <i class="uil uil-building"></i>
+                        <span class="link-name">Companies</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#drives" onclick="showSection('drives'); return false;" id="nav-drives">
+                        <i class="uil uil-briefcase"></i>
+                        <span class="link-name">Drives</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#students" onclick="showSection('students'); return false;" id="nav-students">
+                        <i class="uil uil-users-alt"></i>
+                        <span class="link-name">Students</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#reviews" onclick="showSection('reviews'); return false;" id="nav-reviews">
+                        <i class="uil uil-comments"></i>
+                        <span class="link-name">Reviews</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#change-requests" onclick="showSection('change-requests'); return false;" id="nav-change-requests">
+                        <i class="uil uil-shield-check"></i>
+                        <span class="link-name">Change Requests</span>
+                        <% if(message.length > 0){ %>
+                        <span class="badge-count"><%= message.length %></span>
+                        <% } %>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="openSearch()">
+                        <i class="uil uil-search"></i>
+                        <span class="link-name">Search Student</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#add-admin" onclick="showSection('add-admin'); return false;" id="nav-add-admin">
+                        <i class="uil uil-user-plus"></i>
+                        <span class="link-name">Add Admin</span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="logout-mode">
+                <li>
+                    <a href="/alogout">
+                        <i class="uil uil-signout"></i>
+                        <span class="link-name">Logout</span>
+                    </a>
+                </li>
+                <li class="mode">
+                    <a href="#">
+                        <i class="uil uil-moon"></i>
+                        <span class="link-name">Dark Mode</span>
+                    </a>
+                    <div class="mode-toggle">
+                        <span class="switch"></span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="dashboard">
+        <div class="top">
+            <i class="uil uil-bars sidebar-toggle"></i>
+            <div class="greeting">
+                <h1 class="heading-text" id="greetingText">Hello Admin!</h1>
+                <p class="sub-heading" id="dateText"></p>
+            </div>
+            <div class="top-right">
+                <div class="notif-wrapper">
+                    <span id="notif-bell"><i class="uil uil-bell"></i><span class="notif-badge">0</span></span>
+                    <div id="notif-dropdown">
+                        <div class="notif-header">
+                            <h4>Notifications</h4>
+                            <button id="notif-mark-all">Mark all read</button>
+                        </div>
+                        <div id="notif-list"></div>
+                    </div>
+                </div>
+                <img src="images/profile.jpg" alt="">
+            </div>
+        </div>
+
+        <div class="dash-content">
+
+            <!-- ===== DASHBOARD OVERVIEW ===== -->
+            <div id="overview" class="section active">
+
+                <!-- Batch Selector for Dashboard -->
+                <div class="batch-selector">
+                    <label><i class="uil uil-calendar-alt"></i> Batch:</label>
+                    <select id="dashBatchFilter" onchange="updateDashboard()">
+                        <% for(var b=0; b<batchStats.length; b++){ %>
+                        <option value="<%= batchStats[b].batch %>"><%= batchStats[b].batch %> Batch</option>
+                        <% } %>
+                    </select>
+                </div>
+
+                <div class="metric-row">
+                    <div class="metric-card">
+                        <div class="metric-icon mi-blue"><i class="uil uil-users-alt"></i></div>
+                        <div class="metric-body">
+                            <span class="metric-num" id="dashTotal">-</span>
+                            <span class="metric-label">Total Students</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon mi-green"><i class="uil uil-check-circle"></i></div>
+                        <div class="metric-body">
+                            <span class="metric-num" id="dashPlaced">-</span>
+                            <span class="metric-label">Placed</span>
+                        </div>
+                        <span class="metric-pct" id="dashPct">-</span>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon mi-purple"><i class="uil uil-building"></i></div>
+                        <div class="metric-body">
+                            <span class="metric-num"><%= totalCompanies %></span>
+                            <span class="metric-label">Companies</span>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-icon mi-orange"><i class="uil uil-briefcase"></i></div>
+                        <div class="metric-body">
+                            <span class="metric-num"><%= totalDrives %></span>
+                            <span class="metric-label">Drives</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overview-charts">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Placement Rate</h3>
+                            <span class="chart-badge badge-green" id="dashPctBadge">-</span>
+                        </div>
+                        <div class="chart-body"><canvas id="placementPie"></canvas></div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header"><h3>Branch Distribution</h3></div>
+                        <div class="chart-body"><canvas id="branchBar"></canvas></div>
+                    </div>
+                </div>
+
+                <% if(placedList.length > 0){ %>
+                <div class="section-block">
+                    <div class="section-block-header">
+                        <h3><i class="uil uil-trophy"></i> Recently Placed Students</h3>
+                        <a href="#placements" onclick="showSection('placements'); return false;" class="see-all">View all &rarr;</a>
+                    </div>
+                    <div class="placed-mini-list">
+                        <% for(var i=0; i < Math.min(placedList.length, 4); i++){ %>
+                        <div class="placed-mini-card" data-batch="<%= placedList[i].batch %>">
+                            <div class="pmc-avatar"><%= placedList[i].name.charAt(0) %></div>
+                            <div class="pmc-info">
+                                <strong><%= placedList[i].name %></strong>
+                                <span><%= placedList[i].company_name %> &middot; <%= placedList[i].role %></span>
+                            </div>
+                            <span class="pmc-branch"><%= placedList[i].branch %></span>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+                <% } %>
+
+                <div class="quick-links">
+                    <a href="#companies" onclick="showSection('companies'); return false;" class="ql-card">
+                        <i class="uil uil-building"></i>
+                        <span>Companies</span>
+                    </a>
+                    <a href="#drives" onclick="showSection('drives'); return false;" class="ql-card">
+                        <i class="uil uil-briefcase"></i>
+                        <span>Drives</span>
+                    </a>
+                    <a href="#students" onclick="showSection('students'); return false;" class="ql-card">
+                        <i class="uil uil-users-alt"></i>
+                        <span>Students</span>
+                    </a>
+                    <a href="#placements" onclick="showSection('placements'); return false;" class="ql-card">
+                        <i class="uil uil-chart-growth"></i>
+                        <span>Placements</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ===== PLACEMENTS SECTION ===== -->
+            <div id="placements" class="section">
+
+                <!-- Batch Selector -->
+                <div class="batch-selector">
+                    <label><i class="uil uil-calendar-alt"></i> Select Batch:</label>
+                    <select id="batchFilter" onchange="filterByBatch()">
+                        <% for(var b=0; b<batchStats.length; b++){ %>
+                        <option value="<%= batchStats[b].batch %>"><%= batchStats[b].batch %> Batch</option>
+                        <% } %>
+                    </select>
+                </div>
+
+                <!-- Overall headline (shown when "All Batches" selected) -->
+                <div class="headline-stats" id="placementHeadlineAll">
+                    <div class="hl-stat">
+                        <span class="hl-num hl-blue"><%= totalStudents %></span>
+                        <span class="hl-label">Total Students</span>
+                    </div>
+                    <div class="hl-stat">
+                        <span class="hl-num hl-green"><%= placedStudents %></span>
+                        <span class="hl-label">Placed</span>
+                    </div>
+                    <div class="hl-stat">
+                        <span class="hl-num hl-amber"><%= totalStudents - placedStudents %></span>
+                        <span class="hl-label">Unplaced</span>
+                    </div>
+                    <div class="hl-stat">
+                        <span class="hl-num hl-purple"><%= totalStudents > 0 ? Math.round((placedStudents/totalStudents)*100) : 0 %>%</span>
+                        <span class="hl-label">Placement Rate</span>
+                    </div>
+                </div>
+
+                <div class="dual-charts">
+                    <div class="chart-card">
+                        <div class="chart-header"><h3>Placement Overview</h3></div>
+                        <div class="chart-body"><canvas id="placementPie2"></canvas></div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header"><h3>Branch-wise Placement</h3></div>
+                        <div class="chart-body"><canvas id="branchPlacement"></canvas></div>
+                    </div>
+                </div>      
+
+                <div class="table-card">
+                    <div class="table-card-header">
+                        <h3>Placed Students</h3>
+                        <select id="placedBranchFilter" class="table-filter-input" onchange="filterPlacedTable()">
+                            <option value="">All Branches</option>
+                            <% for(var b=0; b<branchStats.length; b++){ %>
+                            <option value="<%= branchStats[b].branch %>"><%= branchStats[b].branch %></option>
+                            <% } %>
+                        </select>
+                        <input type="text" class="table-search" id="placedSearch" placeholder="Search student or company..." oninput="filterPlacedTable()">
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table" id="placedTable">
+                            <thead><tr><th>#</th><th>Student</th><th>Batch</th><th>Branch</th><th>CGPA</th><th>Company</th><th>Role</th><th>Package</th></tr></thead>
+                            <tbody>
+                                <% for(var i=0; i<placedList.length; i++){ %>
+                                <tr data-branch="<%= placedList[i].branch %>" data-batch="<%= placedList[i].batch || '' %>">
+                                    <td><%= i+1 %></td>
+                                    <td>
+                                        <div class="td-student">
+                                            <span class="td-avatar"><%= placedList[i].name.charAt(0) %></span>
+                                            <div><strong><%= placedList[i].name %></strong><small><%= placedList[i].email %></small></div>
+                                        </div>
+                                    </td>
+                                    <td><span class="batch-tag"><%= placedList[i].batch || '—' %></span></td>
+                                    <td><span class="branch-tag"><%= placedList[i].branch %></span></td>
+                                    <td><span class="cgpa-badge <%= parseFloat(placedList[i].cur_cgpa) >= 9 ? 'cg-high' : parseFloat(placedList[i].cur_cgpa) >= 7 ? 'cg-mid' : 'cg-low' %>"><%= placedList[i].cur_cgpa %></span></td>
+                                    <td><strong><%= placedList[i].company_name %></strong></td>
+                                    <td><%= placedList[i].role %></td>
+                                    <td><%= placedList[i].package_lpa ? placedList[i].package_lpa + ' LPA' : '—' %></td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== COMPANIES SECTION ===== -->
+            <div id="companies" class="section">
+
+                <div class="manage-header">
+                    <div>
+                        <h3>Manage Companies</h3>
+                        <p>Add, view and manage recruiting companies.</p>
+                    </div>
+                    <button class="btn-primary" onclick="toggleAdminForm('companyForm')">
+                        <i class="uil uil-plus"></i> Add Company
+                    </button>
+                </div>
+
+                <div class="manage-filter-bar">
+                    <div class="manage-search">
+                        <i class="uil uil-search"></i>
+                        <input type="text" id="companySearch" placeholder="Search companies..." oninput="filterCompanies()">
+                    </div>
+                </div>
+
+                <div id="companyForm" class="form-card" style="display:none">
+                    <div class="form-card-header">
+                        <h3><i class="uil uil-plus-circle"></i> Add New Company</h3>
+                        <button class="form-close-btn" onclick="toggleAdminForm('companyForm')">&times;</button>
+                    </div>
+                    <form action="/admin/companies" method="post">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Company Name *</label>
+                                <input type="text" name="name" placeholder="e.g. Google India" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Website</label>
+                                <input type="text" name="website" placeholder="https://careers.google.com">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Description</label>
+                                <textarea name="description" rows="3" placeholder="Brief description about the company..."></textarea>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary"><i class="uil uil-check"></i> Add Company</button>
+                            <button type="button" class="btn-secondary" onclick="toggleAdminForm('companyForm')">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <% if(companies.length === 0){ %>
+                <div class="empty-state">
+                    <i class="uil uil-building"></i>
+                    <h3>No Companies Yet</h3>
+                    <p>Click "Add Company" to register your first recruiting company.</p>
+                </div>
+                <% } else { %>
+                <div class="companies-grid manage-grid">
+                    <% for(var i=0; i<companies.length; i++){ var c = companies[i]; %>
+                    <div class="company-card-v2 manage-company-card" data-company="<%= c.name %>" data-website="<%= c.website || '' %>" data-description="<%= c.description || '' %>">
+                        <div class="cc-icon"><%= c.name.charAt(0).toUpperCase() %></div>
+                        <div class="cc-body">
+                            <strong><%= c.name %></strong>
+                            <% if(c.website){ %>
+                            <a href="<%= c.website %>" target="_blank" class="company-link"><i class="uil uil-external-link-alt"></i> <%= c.website %></a>
+                            <% } %>
+                            <% if(c.description){ %>
+                            <p><%= c.description %></p>
+                            <% } else { %>
+                            <p>No description added.</p>
+                            <% } %>
+                            <span class="company-id">ID: <%= c.id %></span>
+                        </div>
+                        <form action="/admin/companies/delete" method="post" onsubmit="return confirm('Delete this company? All associated drives will also be deleted.')">
+                            <input type="hidden" name="id" value="<%= c.id %>">
+                            <button type="submit" class="btn-danger-sm"><i class="uil uil-trash-alt"></i> Delete</button>
+                        </form>
+                    </div>
+                    <% } %>
+                </div>
+                <% } %>
+            </div>
+
+            <!-- ===== DRIVES SECTION ===== -->
+            <div id="drives" class="section">
+
+                <div class="manage-header">
+                    <div>
+                        <h3>Placement Drives</h3>
+                        <p>Create, manage and track placement drives.</p>
+                    </div>
+                    <button class="btn-primary" onclick="toggleAdminForm('driveForm')">
+                        <i class="uil uil-plus"></i> Create Drive
+                    </button>
+                </div>
+
+                <div class="manage-filter-bar">
+                    <div class="manage-search">
+                        <i class="uil uil-search"></i>
+                        <input type="text" id="driveSearch" placeholder="Search company, role, package..." oninput="filterDrives()">
+                    </div>
+                    <select id="driveStatusFilter" class="table-filter-input" onchange="filterDrives()">
+                        <option value="">All Statuses</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                    <select id="driveCompanyFilter" class="table-filter-input" onchange="filterDrives()">
+                        <option value="">All Companies</option>
+                        <% for(var ci=0; ci<companies.length; ci++){ %>
+                        <option value="<%= companies[ci].name %>"><%= companies[ci].name %></option>
+                        <% } %>
+                    </select>
+                    <select id="driveBranchFilter" class="table-filter-input" onchange="filterDrives()">
+                        <option value="">All Branches</option>
+                        <option value="IT">IT</option>
+                        <option value="ECE">ECE</option>
+                        <option value="IT-BI">IT-BI</option>
+                    </select>
+                </div>
+
+                <div id="driveForm" class="form-card" style="display:none">
+                    <div class="form-card-header">
+                        <h3><i class="uil uil-plus-circle"></i> Create New Placement Drive</h3>
+                        <button class="form-close-btn" onclick="toggleAdminForm('driveForm')">&times;</button>
+                    </div>
+                    <% if(companies.length === 0){ %>
+                    <div class="form-note-box">
+                        <i class="uil uil-exclamation-triangle"></i>
+                        No companies found. Add a company first before creating a drive.
+                    </div>
+                    <% } else { %>
+                    <form action="/admin/drives" method="post">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Company *</label>
+                                <select name="company_id" required>
+                                    <option value="" disabled selected>Select Company</option>
+                                    <% for(var ci=0; ci<companies.length; ci++){ %>
+                                    <option value="<%= companies[ci].id %>"><%= companies[ci].name %></option>
+                                    <% } %>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Role *</label>
+                                <input type="text" name="role" placeholder="e.g. Software Engineer" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Package (LPA)</label>
+                                <input type="text" name="package_lpa" placeholder="e.g. 25 LPA">
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select name="status">
+                                    <option value="upcoming">Upcoming</option>
+                                    <option value="active">Active</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Min CGPA</label>
+                                <input type="number" step="0.01" min="0" max="10" name="min_cgpa" value="7.00" placeholder="0.00">
+                            </div>
+                            <div class="form-group">
+                                <label>Max Backlogs Allowed</label>
+                                <input type="number" min="0" name="max_backlogs" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Eligible Branches</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label"><input type="checkbox" name="eligible_branches" value="IT" checked> IT</label>
+                                    <label class="checkbox-label"><input type="checkbox" name="eligible_branches" value="ECE" checked> ECE</label>
+                                    <label class="checkbox-label"><input type="checkbox" name="eligible_branches" value="IT-BI" checked> IT-BI</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Drive Date</label>
+                                <input type="date" name="drive_date">
+                            </div>
+                            <div class="form-group">
+                                <label>Last Date to Apply</label>
+                                <input type="date" name="last_date_apply">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Description</label>
+                                <textarea name="description" rows="3" placeholder="Job description, requirements, etc."></textarea>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary"><i class="uil uil-check"></i> Create Drive</button>
+                            <button type="button" class="btn-secondary" onclick="toggleAdminForm('driveForm')">Cancel</button>
+                        </div>
+                    </form>
+                    <% } %>
+                </div>
+
+                <% if(drives.length === 0){ %>
+                <div class="empty-state">
+                    <i class="uil uil-briefcase"></i>
+                    <h3>No Placement Drives</h3>
+                    <p>Create your first placement drive to start accepting applications.</p>
+                </div>
+                <% } else { %>
+                <div class="drives-grid manage-grid">
+                    <% for(var i=0; i<drives.length; i++){ var d = drives[i]; %>
+                    <div class="drive-card-v2" data-status="<%= d.status %>" data-company="<%= d.company_name %>" data-branches="<%= d.eligible_branches %>">
+                        <div class="drive-card-v2-top">
+                            <div class="drive-status-badge status-<%= d.status %>"><%= d.status %></div>
+                            <form action="/admin/drives/status" method="post">
+                                <input type="hidden" name="id" value="<%= d.id %>">
+                                <select name="status" onchange="this.form.submit()" class="status-select-sm">
+                                    <option value="upcoming" <%= d.status === 'upcoming' ? 'selected' : '' %>>Upcoming</option>
+                                    <option value="active" <%= d.status === 'active' ? 'selected' : '' %>>Active</option>
+                                    <option value="completed" <%= d.status === 'completed' ? 'selected' : '' %>>Completed</option>
+                                    <option value="cancelled" <%= d.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                </select>
+                            </form>
+                        </div>
+                        <div class="drive-card-v2-body">
+                            <div class="drive-company-name"><%= d.company_name %></div>
+                            <div class="drive-role"><%= d.role %></div>
+                            <div class="drive-info-grid">
+                                <div class="drive-info-item"><i class="uil uil-money-bill"></i><span><%= d.package_lpa || 'Not disclosed' %></span></div>
+                                <div class="drive-info-item"><i class="uil uil-users-alt"></i><span><%= d.applicant_count || 0 %> applicants</span></div>
+                                <div class="drive-info-item"><i class="uil uil-calendar-alt"></i><span><%= d.drive_date ? new Date(d.drive_date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : 'TBD' %></span></div>
+                                <% if(d.last_date_apply){ %>
+                                <div class="drive-info-item"><i class="uil uil-clock"></i><span>Deadline: <%= new Date(d.last_date_apply).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) %></span></div>
+                                <% } %>
+                            </div>
+                            <div class="drive-criteria-tags">
+                                <span class="criteria-tag">CGPA &ge; <%= d.min_cgpa %></span>
+                                <span class="criteria-tag">Backlogs &le; <%= d.max_backlogs %></span>
+                                <span class="criteria-tag"><%= d.eligible_branches %></span>
+                            </div>
+                            <% if(d.description){ %>
+                            <p class="drive-desc"><%= d.description %></p>
+                            <% } %>
+                        </div>
+                        <div class="drive-card-v2-footer">
+                            <a href="/admin/drives/<%= d.id %>/applicants" class="btn-secondary">
+                                <i class="uil uil-users-alt"></i> Applicants (<%= d.applicant_count || 0 %>)
+                            </a>
+                            <form action="/admin/drives/delete" method="post" onsubmit="return confirm('Delete this drive and all its applications?')">
+                                <input type="hidden" name="id" value="<%= d.id %>">
+                                <button type="submit" class="btn-danger-sm"><i class="uil uil-trash-alt"></i> Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+                <% } %>
+            </div>
+
+            <!-- ===== STUDENTS SECTION ===== -->
+            <div id="students" class="section">
+                <div class="section-title">
+                    <i class="uil uil-users-alt"></i>
+                    <span>Students</span>
+                </div>
+
+                <!-- Batch selector for entire students section -->
+                <div class="batch-selector">
+                    <label><i class="uil uil-calendar-alt"></i> Batch:</label>
+                    <select id="studentBatchFilter" onchange="applyStudentBatchFilter()">
+                        <% for(var b=0; b<batchStats.length; b++){ %>
+                        <option value="<%= batchStats[b].batch %>"><%= batchStats[b].batch %> Batch</option>
+                        <% } %>
+                    </select>
+                    <div class="batch-selector-summary" id="studentBatchSummary">
+                        <span><strong><%= totalStudents %></strong> students</span>
+                        <span class="sep">&middot;</span>
+                        <span class="bss-green"><strong><%= placedStudents %></strong> placed</span>
+                        <span class="sep">&middot;</span>
+                        <span class="bss-amber"><strong><%= totalStudents - placedStudents %></strong> unplaced</span>
+                        <span class="sep">&middot;</span>
+                        <span class="bss-purple"><strong><%= totalStudents > 0 ? Math.round((placedStudents/totalStudents)*100) : 0 %>%</strong> rate</span>
+                    </div>
+                </div>
+
+                <div class="tab-bar">
+                    <button class="tab-btn tab-active" onclick="switchTab(this, 'sTab-info')">All Students</button>
+                    <button class="tab-btn" onclick="switchTab(this, 'sTab-analytics')">Analytics</button>
+                </div>
+
+                <!-- All Students Tab -->
+                <div id="sTab-info" class="tab-content tab-visible">
+
+                    <div class="table-card">
+                        <div class="table-card-header student-dir-header">
+                            <div class="student-dir-left">
+                                <h3>Student Directory</h3>
+                                <input type="number" id="filterMinCgpa" placeholder="Min CGPA" class="table-filter-input" step="0.01" min="0" max="10">
+                                <input type="number" id="filterMaxBacklogs" placeholder="Max Backlogs" class="table-filter-input" min="0">
+                                <select id="filterBranch" class="table-filter-input">
+                                    <option value="">All Branches</option>
+                                    <% for(var b=0; b<branchStats.length; b++){ %>
+                                    <option value="<%= branchStats[b].branch %>"><%= branchStats[b].branch %></option>
+                                    <% } %>
+                                </select>
+                                <button class="btn-filter" onclick="applyStudentFilter()"><i class="uil uil-filter"></i> Filter</button>
+                                <button class="btn-filter-clear" onclick="clearStudentFilter()">Clear</button>
+                            </div>
+                            <input type="text" class="table-search" id="studentSearch" placeholder="Search by name, email..." oninput="filterStudentTable()">
+                        </div>
+                        <div class="table-wrap">
+                            <table class="data-table" id="studentTable">
+                                <thead><tr><th>#</th><th>Student</th><th>Batch</th><th>Branch</th><th>CGPA</th><th>Backlogs</th><th>Placement Status</th></tr></thead>
+                                <tbody>
+                                    <%
+                                    var placedEmails = {};
+                                    for(var p=0; p<placedList.length; p++){
+                                        if(!placedEmails[placedList[p].email]) placedEmails[placedList[p].email] = [];
+                                        placedEmails[placedList[p].email].push(placedList[p].company_name);
+                                    }
+                                    %>
+                                    <% for(var i=0; i<allStudents.length; i++){ %>
+                                    <tr data-cgpa="<%= allStudents[i].cur_cgpa || '' %>" data-backlogs="<%= (allStudents[i].backlogs !== null && allStudents[i].backlogs !== undefined) ? allStudents[i].backlogs : '' %>" data-branch="<%= allStudents[i].branch %>" data-batch="<%= allStudents[i].batch || '' %>">
+                                        <td><%= i+1 %></td>
+                                        <td>
+                                            <div class="td-student">
+                                                <span class="td-avatar"><%= allStudents[i].name.charAt(0) %></span>
+                                                <div><strong><%= allStudents[i].name %></strong><small><%= allStudents[i].email %></small></div>
+                                            </div>
+                                        </td>
+                                        <td><span class="batch-tag"><%= allStudents[i].batch || '—' %></span></td>
+                                        <td><span class="branch-tag"><%= allStudents[i].branch %></span></td>
+                                        <td>
+                                            <% if(allStudents[i].cur_cgpa){ %>
+                                            <span class="cgpa-badge <%= parseFloat(allStudents[i].cur_cgpa) >= 9 ? 'cg-high' : parseFloat(allStudents[i].cur_cgpa) >= 7 ? 'cg-mid' : 'cg-low' %>"><%= allStudents[i].cur_cgpa %></span>
+                                            <% } else { %>—<% } %>
+                                        </td>
+                                        <td>
+                                            <% if(allStudents[i].backlogs !== null && allStudents[i].backlogs !== undefined){ %>
+                                            <span class="backlog-badge <%= allStudents[i].backlogs > 0 ? 'bl-warn' : 'bl-ok' %>"><%= allStudents[i].backlogs %></span>
+                                            <% } else { %>—<% } %>
+                                        </td>
+                                        <td>
+                                            <% if(placedEmails[allStudents[i].email]){ %>
+                                            <span class="status-placed"><i class="uil uil-check-circle"></i> <%= placedEmails[allStudents[i].email].join(', ') %></span>
+                                            <% } else { %>
+                                            <span class="status-unplaced">Not placed</span>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Student Analytics Tab -->
+                <div id="sTab-analytics" class="tab-content">
+                    <div class="dual-charts">
+                        <div class="chart-card">
+                            <div class="chart-header"><h3>CGPA Distribution</h3></div>
+                            <div class="chart-body"><canvas id="cgpaChart2"></canvas></div>
+                        </div>
+                        <div class="chart-card">
+                            <div class="chart-header"><h3>Branch-wise Students</h3></div>
+                            <div class="chart-body"><canvas id="branchPie"></canvas></div>
+                        </div>
+                    </div>
+
+                    <div class="table-card">
+                        <div class="table-card-header"><h3>Branch Analytics</h3></div>
+                        <div class="table-wrap">
+                            <table class="data-table" id="branchAnalyticsTable">
+                                <thead><tr><th>Branch</th><th>Students</th><th>Avg CGPA</th><th>Share</th></tr></thead>
+                                <tbody id="branchAnalyticsBody">
+                                    <% for(var b=0; b<branchStats.length; b++){ %>
+                                    <tr>
+                                        <td><span class="branch-tag"><%= branchStats[b].branch %></span></td>
+                                        <td><strong><%= branchStats[b].count %></strong></td>
+                                        <td><%= branchStats[b].avg_cgpa || '—' %></td>
+                                        <td>
+                                            <div class="bar-inline"><div class="bar-fill" style="width:<%= totalStudents > 0 ? (branchStats[b].count / totalStudents * 100) : 0 %>%"></div></div>
+                                            <span class="bar-pct"><%= totalStudents > 0 ? Math.round(branchStats[b].count / totalStudents * 100) : 0 %>%</span>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== REVIEWS SECTION ===== -->
+            <div id="reviews" class="section">
+                <div class="section-title">
+                    <i class="uil uil-comments"></i>
+                    <span>Student Reviews</span>
+                    <span class="title-count"><%= reviw.length %></span>
+                </div>
+                <% if(reviw.length === 0){ %>
+                <div class="empty-state">
+                    <i class="uil uil-comments"></i>
+                    <h3>No Reviews Yet</h3>
+                    <p>Students haven't submitted any reviews.</p>
+                </div>
+                <% } else { %>
+                <div class="reviews-grid">
+                    <% for(var i=0; i<reviw.length; i++){ %>
+                    <div class="review-card">
+                        <div class="review-top">
+                            <div class="review-avatar"><%= reviw[i].name.charAt(0).toUpperCase() %></div>
+                            <div>
+                                <strong class="review-name"><%= reviw[i].name %></strong>
+                                <span class="review-label">Student</span>
+                            </div>
+                        </div>
+                        <p class="review-text">"<%= reviw[i].review %>"</p>
+                    </div>
+                    <% } %>
+                </div>
+                <% } %>
+            </div>
+
+            <!-- ===== CHANGE REQUESTS SECTION ===== -->
+            <div id="change-requests" class="section">
+                <div class="section-title">
+                    <i class="uil uil-shield-check"></i>
+                    <span>Change Requests</span>
+                    <span class="title-count"><%= changeRequests.length %></span>
+                </div>
+
+                <div class="manage-filter-bar">
+                    <div class="manage-search">
+                        <i class="uil uil-search"></i>
+                        <input type="text" id="requestSearch" placeholder="Search student, email, reason..." oninput="filterChangeRequests()">
+                    </div>
+                    <select id="requestStatusFilter" class="table-filter-input" onchange="filterChangeRequests()">
+                        <option value="">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                    <select id="requestTypeFilter" class="table-filter-input" onchange="filterChangeRequests()">
+                        <option value="">All Types</option>
+                        <option value="academic">Academic</option>
+                        <option value="non_academic">Non Academic</option>
+                    </select>
+                </div>
+
+                <% if(changeRequests.length === 0){ %>
+                <div class="empty-state">
+                    <i class="uil uil-check-circle"></i>
+                    <h3>Nothing here</h3>
+                    <p>No change requests found.</p>
+                </div>
+                <% } else { %>
+                <div class="requests-list">
+                    <% for(var i=0; i<changeRequests.length; i++){ var r = changeRequests[i]; %>
+                    <div class="request-card-v2 status-border-<%= r.status %>" data-status="<%= r.status %>" data-type="<%= r.req_type %>">
+                        <div class="request-card-v2-top">
+                            <div class="request-card-v2-info">
+                                <span class="req-type-badge-v2 type-<%= r.req_type %>"><%= r.req_type.replace('_',' ') %></span>
+                                <h3 class="request-name"><%= r.student_name || r.email %></h3>
+                                <span class="request-email"><%= r.email %></span>
+                            </div>
+                            <span class="app-status-badge app-<%= r.status === 'pending' ? 'applied' : r.status === 'approved' ? 'selected' : 'rejected' %>"><%= r.status %></span>
+                        </div>
+                        <div class="request-card-v2-body">
+                            <p class="request-reason"><strong>Reason:</strong> <%= r.reason %></p>
+                            <div class="request-meta-row">
+                                <span><i class="uil uil-calendar-alt"></i> <%= new Date(r.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) %></span>
+                                <% if(r.doc_link){ %>
+                                <a href="<%= r.doc_link %>" target="_blank"><i class="uil uil-file-alt"></i> Proof</a>
+                                <% } %>
+                                <% if(r.reviewed_at){ %>
+                                <span><i class="uil uil-check"></i> Reviewed: <%= new Date(r.reviewed_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) %></span>
+                                <% } %>
+                            </div>
+                            <% if(r.admin_remarks){ %>
+                            <p class="admin-remark-text"><i class="uil uil-comment-info"></i> "<%= r.admin_remarks %>"</p>
+                            <% } %>
+                        </div>
+                        <div class="request-card-v2-actions">
+                            <a href="/admin/review/<%= r.id %>" class="btn-secondary"><i class="uil uil-eye"></i> View Details</a>
+                            <% if(r.status === 'pending'){ %>
+                            <form action="/valid" method="post" onsubmit="return confirm('Approve?')">
+                                <input type="hidden" name="id" value="<%= r.id %>">
+                                <button type="submit" class="btn-success"><i class="uil uil-check"></i> Approve</button>
+                            </form>
+                            <button type="button" class="btn-danger-sm" onclick="document.getElementById('reject-<%= r.id %>').style.display='flex'">
+                                <i class="uil uil-times"></i> Reject
+                            </button>
+                            <form id="reject-<%= r.id %>" action="/decline" method="post" class="reject-inline" onsubmit="return this.admin_remarks.value.trim() ? true : (alert('Please provide a reason'),false)">
+                                <input type="hidden" name="id" value="<%= r.id %>">
+                                <input type="text" name="admin_remarks" placeholder="Reason..." required>
+                                <button type="submit" class="btn-danger-sm">Confirm</button>
+                                <button type="button" class="btn-secondary" onclick="this.parentElement.style.display='none'">Cancel</button>
+                            </form>
+                            <% } %>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+                <% } %>
+            </div>
+
+            <!-- ===== ADD ADMIN ===== -->
+            <div id="add-admin" class="section">
+                <div class="section-title">
+                    <i class="uil uil-user-plus"></i>
+                    <span>Add New Admin</span>
+                </div>
+
+                <div class="add-admin-form-wrap">
+                    <form id="addAdminForm" onsubmit="return submitAddAdmin(event)">
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" id="adminName" name="username" required placeholder="Full Name" class="input-field-admin">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="adminEmail" name="email" required placeholder="admin@example.com" class="input-field-admin">
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <input type="password" id="adminPass" name="password" required minlength="4" placeholder="Min 4 characters" class="input-field-admin">
+                            </div>
+                            <div class="form-group">
+                                <label>Security Question Answer</label>
+                                <input type="text" id="adminSecQ" name="securityq" required placeholder="Used for password reset" class="input-field-admin">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary" style="margin-top:16px;"><i class="uil uil-plus"></i> Create Admin</button>
+                    </form>
+                    <div id="addAdminMsg" style="margin-top:12px;"></div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Search popup -->
+    <div class="popup-confirm" id="popup2">
+        <div class="popup-content">
+            <h2>Search Student</h2>
+            <form action="/search" method="post" id="s-form">
+                <div class="form-group" style="width:93.5%">
+                    <input type="text" name="id" placeholder="Student Email Id" required>
+                </div>
+            </form>
+        </div>
+        <button class="btn cancel-button" onclick="closeSearch()">Cancel</button>
+        <button class="btn confirm-button" onclick="submitSearch()">Search</button>
+    </div>
+
+    <script src="styles/admind.js"></script>
+    <script src="/styles/notifications.js"></script>
+    <script>
+    (function(){
+        var h = new Date().getHours();
+        var g = h < 12 ? 'Good Morning' : h < 17 ? 'Good Afternoon' : 'Good Evening';
+        document.getElementById('greetingText').textContent = g + ', Admin!';
+        var dateStr = new Date().toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+        document.getElementById('dateText').textContent = dateStr;
+        var wd = document.getElementById('welcomeDate');
+        if(wd) wd.textContent = dateStr;
+    })();
+
+    Chart.defaults.font.family = "'Poppins', sans-serif";
+    Chart.defaults.font.size = 12;
+    Chart.defaults.plugins.legend.labels.usePointStyle = true;
+    var chartColors = ['#4361ee','#10b981','#f59e0b','#8b5cf6','#ec4899','#06b6d4','#ef4444'];
+
+    // Raw data for dynamic filtering
+    var allStudentsData = <%- JSON.stringify(allStudents || []) %>;
+    var placedListData = <%- JSON.stringify(placedList || []) %>;
+    var batchStatsData = <%- JSON.stringify(batchStats || []) %>;
+    var branchPlacementData = <%- JSON.stringify(branchPlacementStats || []) %>;
+
+    // Overview: Placement Pie (dynamic)
+    var overviewPie, overviewBar;
+
+    function updateDashboard(){
+        var batch = document.getElementById('dashBatchFilter').value;
+        var bs = batchStatsData.find(function(s){ return s.batch === batch; });
+        var total = bs ? bs.total : 0;
+        var placed = bs ? bs.placed : 0;
+        var pct = total > 0 ? Math.round((placed/total)*100) : 0;
+
+        document.getElementById('dashTotal').textContent = total;
+        document.getElementById('dashPlaced').textContent = placed;
+        document.getElementById('dashPct').textContent = pct + '%';
+        document.getElementById('dashPctBadge').textContent = pct + '%';
+
+        // Filter data for this batch
+        var students = allStudentsData.filter(function(s){ return s.batch === batch; });
+
+        // Branch distribution
+        var branchCount = {}, branchCgpaSum = {}, branchCgpaN = {};
+        students.forEach(function(s){
+            branchCount[s.branch] = (branchCount[s.branch] || 0) + 1;
+            var c = parseFloat(s.cur_cgpa);
+            if(!isNaN(c)){
+                branchCgpaSum[s.branch] = (branchCgpaSum[s.branch] || 0) + c;
+                branchCgpaN[s.branch] = (branchCgpaN[s.branch] || 0) + 1;
+            }
+        });
+        var branches = Object.keys(branchCount);
+
+        if(overviewPie) overviewPie.destroy();
+        if(overviewBar) overviewBar.destroy();
+
+        overviewPie = new Chart(document.getElementById('placementPie'), {
+            type: 'doughnut',
+            data: { labels: ['Placed','Not Placed'], datasets: [{ data: [placed, total - placed], backgroundColor: ['#10b981','#e5e7eb'], borderWidth: 0, hoverOffset: 8 }] },
+            options: { cutout: '70%', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 16 } } } }
+        });
+
+        overviewBar = new Chart(document.getElementById('branchBar'), {
+            type: 'bar',
+            data: {
+                labels: branches,
+                datasets: [
+                    { label: 'Students', data: branches.map(function(b){ return branchCount[b]; }), backgroundColor: chartColors, borderRadius: 6, borderSkipped: false, maxBarThickness: 44, barPercentage: 0.45, categoryPercentage: 0.55 },
+                    { label: 'Avg CGPA', data: branches.map(function(b){ return branchCgpaN[b] ? (branchCgpaSum[b]/branchCgpaN[b]).toFixed(2) : 0; }), type: 'line', borderColor: '#f59e0b', backgroundColor: '#f59e0b', pointRadius: 5, pointHoverRadius: 7, yAxisID: 'y1', tension: 0.3, borderWidth: 2 }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 14 } } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { stepSize: 1 }, title: { display: true, text: 'Count' } },
+                    y1: { position: 'right', beginAtZero: true, max: 10, grid: { drawOnChartArea: false }, title: { display: true, text: 'Avg CGPA' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Filter recently placed
+        document.querySelectorAll('.placed-mini-card').forEach(function(card){
+            var email = card.getAttribute('data-batch');
+            card.style.display = (email === batch) ? '' : 'none';
+        });
+    }
+    updateDashboard();
+
+    // ===== PLACEMENT SECTION CHARTS (dynamic) =====
+    var placementPie2, branchPlacementChart;
+
+    function buildPlacementCharts(batch){
+        var students = allStudentsData.filter(function(s){ return s.batch === batch; });
+        var placed = placedListData.filter(function(s){ return s.batch === batch; });
+        var placedEmails = {};
+        placed.forEach(function(p){ placedEmails[p.email] = true; });
+        var totalCount = students.length;
+        var placedCount = students.filter(function(s){ return placedEmails[s.email]; }).length;
+
+        // Branch-wise for this batch
+        var branchMap = {};
+        students.forEach(function(s){
+            if(!branchMap[s.branch]) branchMap[s.branch] = {total:0, placed:0};
+            branchMap[s.branch].total++;
+            if(placedEmails[s.email]) branchMap[s.branch].placed++;
+        });
+        var branches = Object.keys(branchMap);
+
+        // Destroy old charts
+        if(placementPie2) placementPie2.destroy();
+        if(branchPlacementChart) branchPlacementChart.destroy();
+
+        placementPie2 = new Chart(document.getElementById('placementPie2'), {
+            type: 'doughnut',
+            data: { labels: ['Placed','Not Placed'], datasets: [{ data: [placedCount, totalCount - placedCount], backgroundColor: ['#10b981','#e5e7eb'], borderWidth: 0 }] },
+            options: { cutout: '65%', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+        });
+
+        branchPlacementChart = new Chart(document.getElementById('branchPlacement'), {
+            type: 'bar',
+            data: {
+                labels: branches,
+                datasets: [
+                    { label: 'Placed', data: branches.map(function(b){ return branchMap[b].placed; }), backgroundColor: '#10b981', borderRadius: 6, maxBarThickness: 44, barPercentage: 0.45, categoryPercentage: 0.55 },
+                    { label: 'Not Placed', data: branches.map(function(b){ return branchMap[b].total - branchMap[b].placed; }), backgroundColor: '#e5e7eb', borderRadius: 6, maxBarThickness: 44, barPercentage: 0.45, categoryPercentage: 0.55 }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { precision: 0 }, title: { display: true, text: 'Students' } } } }
+        });
+    }
+    buildPlacementCharts(batchStatsData.length > 0 ? batchStatsData[0].batch : '');
+
+    // ===== STUDENT ANALYTICS CHARTS (dynamic) =====
+    var cgpaChart2, branchPieChart;
+
+    function buildStudentCharts(batch){
+        var students = allStudentsData.filter(function(s){ return s.batch === batch; });
+
+        // CGPA distribution
+        var cgpaRanges = {'9-10':0,'8-9':0,'7-8':0,'6-7':0,'Below 6':0};
+        students.forEach(function(s){
+            var c = parseFloat(s.cur_cgpa);
+            if(isNaN(c)) return;
+            if(c >= 9) cgpaRanges['9-10']++;
+            else if(c >= 8) cgpaRanges['8-9']++;
+            else if(c >= 7) cgpaRanges['7-8']++;
+            else if(c >= 6) cgpaRanges['6-7']++;
+            else cgpaRanges['Below 6']++;
+        });
+        var cgpaLabels = Object.keys(cgpaRanges);
+        var cgpaCounts = cgpaLabels.map(function(k){ return cgpaRanges[k]; });
+
+        // Branch distribution
+        var branchCount = {};
+        students.forEach(function(s){
+            branchCount[s.branch] = (branchCount[s.branch] || 0) + 1;
+        });
+        var branchLabels = Object.keys(branchCount);
+        var branchCounts = branchLabels.map(function(b){ return branchCount[b]; });
+
+        // Branch avg CGPA
+        var branchCgpaSum = {}, branchCgpaCount = {};
+        students.forEach(function(s){
+            var c = parseFloat(s.cur_cgpa);
+            if(isNaN(c)) return;
+            branchCgpaSum[s.branch] = (branchCgpaSum[s.branch] || 0) + c;
+            branchCgpaCount[s.branch] = (branchCgpaCount[s.branch] || 0) + 1;
+        });
+
+        // Update branch analytics table
+        var tbody = document.getElementById('branchAnalyticsBody');
+        var total = students.length;
+        tbody.innerHTML = branchLabels.map(function(b){
+            var avg = branchCgpaCount[b] ? (branchCgpaSum[b]/branchCgpaCount[b]).toFixed(2) : '—';
+            var pct = total > 0 ? Math.round(branchCount[b]/total*100) : 0;
+            return '<tr><td><span class="branch-tag">'+b+'</span></td><td><strong>'+branchCount[b]+'</strong></td><td>'+avg+'</td><td><div class="bar-inline"><div class="bar-fill" style="width:'+pct+'%"></div></div><span class="bar-pct">'+pct+'%</span></td></tr>';
+        }).join('');
+
+        // Destroy old
+        if(cgpaChart2) cgpaChart2.destroy();
+        if(branchPieChart) branchPieChart.destroy();
+
+        cgpaChart2 = new Chart(document.getElementById('cgpaChart2'), {
+            type: 'bar',
+            data: { labels: cgpaLabels, datasets: [{ label: 'Students', data: cgpaCounts, backgroundColor: chartColors, borderRadius: 6, borderSkipped: false, maxBarThickness: 48, barPercentage: 0.5, categoryPercentage: 0.6 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { stepSize: 1 } }, x: { grid: { display: false } } } }
+        });
+
+        branchPieChart = new Chart(document.getElementById('branchPie'), {
+            type: 'doughnut',
+            data: { labels: branchLabels, datasets: [{ data: branchCounts, backgroundColor: chartColors, borderWidth: 0, hoverOffset: 8 }] },
+            options: { cutout: '55%', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { padding: 14 } } } }
+        });
+    }
+    buildStudentCharts(batchStatsData.length > 0 ? batchStatsData[0].batch : '');
+
+    // ===== TAB & FORM HELPERS =====
+    function switchTab(btn, tabId){
+        var parent = btn.closest('.section');
+        parent.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('tab-active'); });
+        btn.classList.add('tab-active');
+        parent.querySelectorAll('.tab-content').forEach(function(tc){ tc.classList.remove('tab-visible'); });
+        document.getElementById(tabId).classList.add('tab-visible');
+    }
+
+    function toggleAdminForm(id){
+        var form = document.getElementById(id);
+        if(form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // ===== FILTER FUNCTIONS =====
+    function filterCompanies(){
+        var q = document.getElementById('companySearch').value.toLowerCase();
+        document.querySelectorAll('#companies .manage-company-card').forEach(function(card){
+            var searchable = [
+                card.getAttribute('data-company') || '',
+                card.getAttribute('data-website') || '',
+                card.getAttribute('data-description') || ''
+            ].join(' ').toLowerCase();
+            card.style.display = searchable.includes(q) ? '' : 'none';
+        });
+    }
+
+    function filterDrives(){
+        var q = document.getElementById('driveSearch').value.toLowerCase();
+        var status = document.getElementById('driveStatusFilter').value;
+        var company = document.getElementById('driveCompanyFilter').value;
+        var branch = document.getElementById('driveBranchFilter').value;
+
+        document.querySelectorAll('#drives .drive-card-v2').forEach(function(card){
+            var textMatch = card.textContent.toLowerCase().includes(q);
+            var statusMatch = !status || card.getAttribute('data-status') === status;
+            var companyMatch = !company || card.getAttribute('data-company') === company;
+            var branches = card.getAttribute('data-branches') || '';
+            var branchMatch = !branch || branches.split(',').map(function(b){ return b.trim(); }).includes(branch);
+            card.style.display = textMatch && statusMatch && companyMatch && branchMatch ? '' : 'none';
+        });
+    }
+
+    function filterChangeRequests(){
+        var q = document.getElementById('requestSearch').value.toLowerCase();
+        var status = document.getElementById('requestStatusFilter').value;
+        var type = document.getElementById('requestTypeFilter').value;
+
+        document.querySelectorAll('#change-requests .request-card-v2').forEach(function(card){
+            var textMatch = card.textContent.toLowerCase().includes(q);
+            var statusMatch = !status || card.getAttribute('data-status') === status;
+            var typeMatch = !type || card.getAttribute('data-type') === type;
+            card.style.display = textMatch && statusMatch && typeMatch ? '' : 'none';
+        });
+    }
+
+    // ===== PLACEMENT BATCH FILTER =====
+    function filterByBatch(){
+        var batch = document.getElementById('batchFilter').value;
+
+        // Update headline stats
+        var headline = document.getElementById('placementHeadlineAll');
+        var bs = batchStatsData.find(function(s){ return s.batch === batch; });
+        if(bs){
+            headline.querySelector('.hl-blue').textContent = bs.total;
+            headline.querySelector('.hl-green').textContent = bs.placed;
+            headline.querySelector('.hl-amber').textContent = bs.total - bs.placed;
+            headline.querySelector('.hl-purple').textContent = (bs.total > 0 ? Math.round((bs.placed/bs.total)*100) : 0) + '%';
+        }
+
+        // Rebuild placement charts for selected batch
+        buildPlacementCharts(batch);
+
+        // Filter placed students table
+        filterPlacedTable();
+    }
+
+    // ===== PLACED TABLE FILTER =====
+    function filterPlacedTable(){
+        var q = document.getElementById('placedSearch').value.toLowerCase();
+        var branch = document.getElementById('placedBranchFilter').value;
+        var batch = document.getElementById('batchFilter').value;
+        document.querySelectorAll('#placedTable tbody tr').forEach(function(r){
+            var matchesText = r.textContent.toLowerCase().includes(q);
+            var matchesBranch = !branch || r.getAttribute('data-branch') === branch;
+            var matchesBatch = r.getAttribute('data-batch') === batch;
+            r.style.display = matchesText && matchesBranch && matchesBatch ? '' : 'none';
+        });
+    }
+
+    // ===== STUDENT FILTERS =====
+    function filterStudentTable(){
+        var q = document.getElementById('studentSearch').value.toLowerCase();
+        document.querySelectorAll('#studentTable tbody tr').forEach(function(r){
+            if(r.style.display === 'none' && r.getAttribute('data-filtered') === 'true') return;
+            r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+    }
+
+    function applyStudentFilter(){
+        var minCgpa = parseFloat(document.getElementById('filterMinCgpa').value) || 0;
+        var maxBacklogs = document.getElementById('filterMaxBacklogs').value;
+        var branch = document.getElementById('filterBranch').value;
+        var batch = document.getElementById('studentBatchFilter').value;
+        maxBacklogs = maxBacklogs !== '' ? parseInt(maxBacklogs) : null;
+
+        document.querySelectorAll('#studentTable tbody tr').forEach(function(r){
+            var cgpa = parseFloat(r.getAttribute('data-cgpa')) || 0;
+            var backlogs = r.getAttribute('data-backlogs');
+            var br = r.getAttribute('data-branch');
+            var bt = r.getAttribute('data-batch');
+            backlogs = backlogs !== '' ? parseInt(backlogs) : 0;
+
+            var show = true;
+            if(minCgpa > 0 && cgpa < minCgpa) show = false;
+            if(maxBacklogs !== null && backlogs > maxBacklogs) show = false;
+            if(branch && br !== branch) show = false;
+            if(bt !== batch) show = false;
+
+            r.style.display = show ? '' : 'none';
+            r.setAttribute('data-filtered', show ? 'false' : 'true');
+        });
+    }
+
+    function clearStudentFilter(){
+        var defaultBatch = batchStatsData.length > 0 ? batchStatsData[0].batch : '';
+        document.getElementById('filterMinCgpa').value = '';
+        document.getElementById('filterMaxBacklogs').value = '';
+        document.getElementById('filterBranch').value = '';
+        document.getElementById('studentBatchFilter').value = defaultBatch;
+        applyStudentFilter();
+        updateStudentBatchSummary(defaultBatch);
+        buildStudentCharts(defaultBatch);
+    }
+
+    // ===== STUDENT BATCH FILTER =====
+    function applyStudentBatchFilter(){
+        var batch = document.getElementById('studentBatchFilter').value;
+        updateStudentBatchSummary(batch);
+        applyStudentFilter();
+        buildStudentCharts(batch);
+    }
+
+    function updateStudentBatchSummary(batch){
+        var summary = document.getElementById('studentBatchSummary');
+        var bs = batchStatsData.find(function(s){ return s.batch === batch; });
+        if(bs){
+            var rate = bs.total > 0 ? Math.round((bs.placed/bs.total)*100) : 0;
+            summary.innerHTML = '<span><strong>'+bs.total+'</strong> students</span><span class="sep">&middot;</span><span class="bss-green"><strong>'+bs.placed+'</strong> placed</span><span class="sep">&middot;</span><span class="bss-amber"><strong>'+(bs.total-bs.placed)+'</strong> unplaced</span><span class="sep">&middot;</span><span class="bss-purple"><strong>'+rate+'%</strong> rate</span>';
+        } else {
+            summary.innerHTML = '';
+        }
+    }
+
+    // ===== INITIAL PAGE LOAD: filter everything by default (first) batch =====
+    filterByBatch();
+    applyStudentBatchFilter();
+
+    // ===== ADD ADMIN =====
+    function submitAddAdmin(e){
+        e.preventDefault();
+        var form = document.getElementById('addAdminForm');
+        var msgEl = document.getElementById('addAdminMsg');
+        var data = {
+            username: document.getElementById('adminName').value.trim(),
+            email: document.getElementById('adminEmail').value.trim(),
+            password: document.getElementById('adminPass').value,
+            securityq: document.getElementById('adminSecQ').value.trim()
+        };
+        msgEl.innerHTML = '<span style="color:#6366f1;">Creating admin...</span>';
+        fetch('/admin/add-admin', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify(data)
+        }).then(function(r){ return r.json(); }).then(function(res){
+            if(res.success){
+                msgEl.innerHTML = '<span style="color:#10b981;font-weight:600;"><i class="uil uil-check-circle"></i> ' + res.message + '</span>';
+                form.reset();
+            } else {
+                msgEl.innerHTML = '<span style="color:#ef4444;font-weight:600;"><i class="uil uil-times-circle"></i> ' + res.message + '</span>';
+            }
+        }).catch(function(){
+            msgEl.innerHTML = '<span style="color:#ef4444;">Network error. Try again.</span>';
+        });
+        return false;
+    }
+
+    </script>
+</body>
+</html>

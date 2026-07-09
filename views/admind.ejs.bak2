@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/admind.css">
+    <link rel="stylesheet" href="/styles/notifications.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <title>Admin Dashboard | IIITAPfolio</title>
+</head>
+<body>
+    <nav>
+        <div class="logo-name">
+            <div class="logo-image">
+                <img src="images/IIITA_Logo.png" alt="">
+            </div>
+            <span class="logo_name">IIITAPfolio</span>
+        </div>
+
+        <div class="menu-items">
+            <ul class="nav-links">
+                <li>
+                    <a href="#" onclick="showSection('overview')" class="nav-active" id="nav-overview">
+                        <i class="uil uil-tachometer-fast-alt"></i>
+                        <span class="link-name">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('analytics')" id="nav-analytics">
+                        <i class="uil uil-chart-pie-alt"></i>
+                        <span class="link-name">Analytics</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('verify')" id="nav-verify">
+                        <i class="uil uil-shield-check"></i>
+                        <span class="link-name">Quick Review</span>
+                        <% if(message.length > 0){ %>
+                        <span class="badge-count"><%=message.length%></span>
+                        <% } %>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/review">
+                        <i class="uil uil-file-search-alt"></i>
+                        <span class="link-name">All Requests</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('reviews')" id="nav-reviews">
+                        <i class="uil uil-comments"></i>
+                        <span class="link-name">Reviews</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/companies">
+                        <i class="uil uil-building"></i>
+                        <span class="link-name">Companies</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/drives">
+                        <i class="uil uil-briefcase"></i>
+                        <span class="link-name">Placement Drives</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/students">
+                        <i class="uil uil-users-alt"></i>
+                        <span class="link-name">Students</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="openSearch()">
+                        <i class="uil uil-search"></i>
+                        <span class="link-name">Search Portfolio</span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="logout-mode">
+                <li>
+                    <a href="/alogout">
+                        <i class="uil uil-signout"></i>
+                        <span class="link-name">Logout</span>
+                    </a>
+                </li>
+                <li class="mode">
+                    <a href="#">
+                        <i class="uil uil-moon"></i>
+                        <span class="link-name">Dark Mode</span>
+                    </a>
+                    <div class="mode-toggle">
+                        <span class="switch"></span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="dashboard">
+        <div class="top">
+            <i class="uil uil-bars sidebar-toggle"></i>
+            <div class="greeting">
+                <h1 class="heading-text" id="greetingText">Hello Admin!</h1>
+                <p class="sub-heading" id="dateText"></p>
+            </div>
+            <div class="top-right">
+                <div class="notif-wrapper">
+                    <span id="notif-bell"><i class="uil uil-bell"></i><span class="notif-badge">0</span></span>
+                    <div id="notif-dropdown">
+                        <div class="notif-header">
+                            <h4>Notifications</h4>
+                            <button id="notif-mark-all">Mark all read</button>
+                        </div>
+                        <div id="notif-list"></div>
+                    </div>
+                </div>
+                <img src="images/profile.jpg" alt="">
+            </div>
+        </div>
+
+        <div class="dash-content">
+
+            <!-- ===== OVERVIEW SECTION ===== -->
+            <div id="overview" class="section active">
+                <div class="title">
+                    <i class="uil uil-tachometer-fast-alt"></i>
+                    <span class="text">Dashboard Overview</span>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card kpi-blue">
+                        <div class="kpi-icon"><i class="uil uil-users-alt"></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-value"><%= typeof totalStudents !== 'undefined' ? totalStudents : 0 %></span>
+                            <span class="kpi-label">Total Students</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card kpi-green">
+                        <div class="kpi-icon"><i class="uil uil-check-circle"></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-value"><%= typeof placedStudents !== 'undefined' ? placedStudents : 0 %></span>
+                            <span class="kpi-label">Students Placed</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card kpi-purple">
+                        <div class="kpi-icon"><i class="uil uil-building"></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-value"><%= typeof totalCompanies !== 'undefined' ? totalCompanies : 0 %></span>
+                            <span class="kpi-label">Companies</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card kpi-orange">
+                        <div class="kpi-icon"><i class="uil uil-briefcase"></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-value"><%= typeof totalDrives !== 'undefined' ? totalDrives : 0 %></span>
+                            <span class="kpi-label">Placement Drives</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card kpi-red">
+                        <div class="kpi-icon"><i class="uil uil-clock-three"></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-value"><%= message.length %></span>
+                            <span class="kpi-label">Pending Requests</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card kpi-teal">
+                        <div class="kpi-icon"><i class="uil uil-comment-dots"></i></div>
+                        <div class="kpi-info">
+                            <span class="kpi-value"><%= reviw.length %></span>
+                            <span class="kpi-label">Student Reviews</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="uil uil-chart-pie-alt"></i> Placement Rate</h3>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="placementPie"></canvas>
+                        </div>
+                        <div class="chart-footer">
+                            <span class="chart-stat"><span class="dot dot-green"></span> Placed: <%= placedStudents %></span>
+                            <span class="chart-stat"><span class="dot dot-gray"></span> Not Placed: <%= totalStudents - placedStudents %></span>
+                            <span class="chart-stat-highlight"><%= totalStudents > 0 ? Math.round((placedStudents/totalStudents)*100) : 0 %>%</span>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="uil uil-chart-bar"></i> Branch Distribution</h3>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="branchBar"></canvas>
+                        </div>
+                        <div class="chart-footer">
+                            <% for(var b=0; b<branchStats.length; b++){ %>
+                            <span class="chart-stat"><strong><%= branchStats[b].branch %></strong>: <%= branchStats[b].count %> (Avg CGPA: <%= branchStats[b].avg_cgpa || '-' %>)</span>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="uil uil-analytics"></i> CGPA Distribution</h3>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="cgpaChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="uil uil-file-check-alt"></i> Application Status</h3>
+                        </div>
+                        <div class="chart-body">
+                            <canvas id="appStatusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions-grid">
+                    <a href="/admin/students" class="quick-action-card">
+                        <i class="uil uil-users-alt"></i>
+                        <span>View Students</span>
+                    </a>
+                    <a href="/admin/companies" class="quick-action-card">
+                        <i class="uil uil-building"></i>
+                        <span>Companies</span>
+                    </a>
+                    <a href="/admin/drives" class="quick-action-card">
+                        <i class="uil uil-briefcase"></i>
+                        <span>Drives</span>
+                    </a>
+                    <a href="/admin/review" class="quick-action-card">
+                        <i class="uil uil-shield-check"></i>
+                        <span>Requests</span>
+                    </a>
+                </div>
+
+                <!-- Pending Requests Preview -->
+                <% if(message.length > 0){ %>
+                <div class="title" style="margin-top:30px;">
+                    <i class="uil uil-bell"></i>
+                    <span class="text">Pending Requests</span>
+                    <a href="/admin/review" class="view-all-link">View all &rarr;</a>
+                </div>
+                <div class="quick-preview">
+                    <% for(var i=0; i<Math.min(message.length, 5); i++){ %>
+                    <div class="preview-row">
+                        <span class="req-badge <%= message[i].req_type === 'academic' ? 'badge-acad' : 'badge-nonacad' %>">
+                            <%= message[i].req_type.replace('_',' ') %>
+                        </span>
+                        <span class="preview-email"><i class="uil uil-user"></i> <%=message[i].email%></span>
+                        <span class="preview-reason"><%= message[i].reason.length > 60 ? message[i].reason.substring(0,60) + '...' : message[i].reason %></span>
+                        <a href="/admin/review/<%= message[i].id %>" class="preview-link">Review &rarr;</a>
+                    </div>
+                    <% } %>
+                    <% if(message.length > 5){ %>
+                    <div class="more-indicator">+ <%= message.length - 5 %> more pending</div>
+                    <% } %>
+                </div>
+                <% } %>
+            </div>
+
+            <!-- ===== ANALYTICS SECTION ===== -->
+            <div id="analytics" class="section">
+                <div class="title">
+                    <i class="uil uil-chart-pie-alt"></i>
+                    <span class="text">Detailed Analytics</span>
+                </div>
+
+                <div class="analytics-section">
+                    <h3 class="analytics-subtitle"><i class="uil uil-briefcase"></i> Drive Statistics</h3>
+                    <div class="mini-stats-row">
+                        <% for(var d=0; d<driveStats.length; d++){ %>
+                        <div class="mini-stat mini-<%= driveStats[d].status %>">
+                            <span class="mini-stat-val"><%= driveStats[d].count %></span>
+                            <span class="mini-stat-label"><%= driveStats[d].status %></span>
+                        </div>
+                        <% } %>
+                        <% if(driveStats.length === 0){ %>
+                        <div class="mini-stat">
+                            <span class="mini-stat-val">0</span>
+                            <span class="mini-stat-label">No Drives Yet</span>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+
+                <div class="analytics-section">
+                    <h3 class="analytics-subtitle"><i class="uil uil-file-check-alt"></i> Application Pipeline</h3>
+                    <div class="pipeline-bar">
+                        <% 
+                        var totalApps = 0;
+                        for(var a=0; a<appStats.length; a++) totalApps += appStats[a].count;
+                        var statusColors = {applied:'#4361ee', shortlisted:'#f59e0b', selected:'#10b981', rejected:'#ef4444'};
+                        for(var a=0; a<appStats.length; a++){ 
+                            var pct = totalApps > 0 ? (appStats[a].count / totalApps * 100) : 0;
+                        %>
+                        <div class="pipeline-segment" style="width:<%= pct %>%;background:<%= statusColors[appStats[a].status] || '#999' %>;" title="<%= appStats[a].status %>: <%= appStats[a].count %>"></div>
+                        <% } %>
+                    </div>
+                    <div class="pipeline-legend">
+                        <% for(var a=0; a<appStats.length; a++){ %>
+                        <span class="pipeline-item">
+                            <span class="pip-dot" style="background:<%= statusColors[appStats[a].status] || '#999' %>"></span>
+                            <%= appStats[a].status %>: <strong><%= appStats[a].count %></strong>
+                        </span>
+                        <% } %>
+                        <% if(appStats.length === 0){ %>
+                        <span class="pipeline-item">No applications yet</span>
+                        <% } %>
+                    </div>
+                </div>
+
+                <div class="analytics-section">
+                    <h3 class="analytics-subtitle"><i class="uil uil-graduation-cap"></i> Branch-wise Summary</h3>
+                    <div class="analytics-table-wrap">
+                        <table class="analytics-table">
+                            <thead>
+                                <tr>
+                                    <th>Branch</th>
+                                    <th>Students</th>
+                                    <th>Avg CGPA</th>
+                                    <th>Distribution</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for(var b=0; b<branchStats.length; b++){ %>
+                                <tr>
+                                    <td><span class="branch-chip"><%= branchStats[b].branch %></span></td>
+                                    <td><strong><%= branchStats[b].count %></strong></td>
+                                    <td><%= branchStats[b].avg_cgpa || '-' %></td>
+                                    <td>
+                                        <div class="progress-mini">
+                                            <div class="progress-fill" style="width:<%= totalStudents > 0 ? (branchStats[b].count / totalStudents * 100) : 0 %>%"></div>
+                                        </div>
+                                        <span class="pct-text"><%= totalStudents > 0 ? Math.round(branchStats[b].count / totalStudents * 100) : 0 %>%</span>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== VERIFY SECTION ===== -->
+            <div id="verify" class="section">
+                <div class="title">
+                    <i class="uil uil-shield-check"></i>
+                    <span class="text">Pending Change Requests</span>
+                    <a href="/admin/review" class="view-all-link">View all &rarr;</a>
+                </div>
+
+                <% if(message.length === 0){ %>
+                <div class="empty-state">
+                    <i class="uil uil-check-circle"></i>
+                    <h3>All caught up!</h3>
+                    <p>No pending requests to review.</p>
+                </div>
+                <% } else { %>
+                <div class="req-list">
+                    <% for(var i=0; i<message.length; i++){ %>
+                    <div class="req-card">
+                        <div class="req-card-info">
+                            <span class="req-badge <%= message[i].req_type === 'academic' ? 'badge-acad' : 'badge-nonacad' %>">
+                                <%= message[i].req_type.replace('_',' ') %>
+                            </span>
+                            <span class="req-email"><i class="uil uil-envelope"></i>&nbsp;<%=message[i].email%></span>
+                            <span class="req-id">#<%=message[i].id%></span>
+                        </div>
+                        <div class="req-reason-text"><strong>Reason:</strong> <%= message[i].reason %></div>
+                        <div class="req-card-actions">
+                            <a href="/admin/review/<%= message[i].id %>" class="btn-doc" style="background:#e8ecff;color:#4361ee;">
+                                <i class="uil uil-eye"></i> View
+                            </a>
+                            <% if(message[i].doc_link){ %>
+                            <a href="<%=message[i].doc_link%>" target="_blank" class="btn-doc">
+                                <i class="uil uil-file-alt"></i> Proof
+                            </a>
+                            <% } %>
+                            <form action="/valid" method="post" style="display:inline" onsubmit="return confirm('Approve?')">
+                                <input type="hidden" name="id" value="<%=message[i].id%>">
+                                <button type="submit" class="btn-approve"><i class="uil uil-check"></i> Approve</button>
+                            </form>
+                            <button type="button" class="btn-reject" onclick="document.getElementById('reject-inline-<%= message[i].id %>').style.display='flex'">
+                                <i class="uil uil-times"></i> Reject
+                            </button>
+                        </div>
+                        <form id="reject-inline-<%= message[i].id %>" action="/decline" method="post" class="reject-inline-form" onsubmit="return this.admin_remarks.value.trim() ? true : (alert('Please provide a rejection reason'),false)">
+                            <input type="hidden" name="id" value="<%= message[i].id %>">
+                            <input type="text" name="admin_remarks" placeholder="Reason for rejection..." required>
+                            <button type="submit" class="btn-reject" style="font-size:12px;">Confirm</button>
+                            <button type="button" class="btn-doc" onclick="this.parentElement.style.display='none'" style="font-size:12px;">Cancel</button>
+                        </form>
+                    </div>
+                    <% } %>
+                </div>
+                <% } %>
+            </div>
+
+            <!-- ===== REVIEWS SECTION ===== -->
+            <div id="reviews" class="section">
+                <div class="title">
+                    <i class="uil uil-comments"></i>
+                    <span class="text">Student Reviews</span>
+                    <span class="title-count"><%= reviw.length %></span>
+                </div>
+                <% if(reviw.length === 0){ %>
+                <div class="empty-state">
+                    <i class="uil uil-comments"></i>
+                    <h3>No Reviews Yet</h3>
+                    <p>Students haven't submitted any reviews.</p>
+                </div>
+                <% } else { %>
+                <div class="reviews-grid">
+                    <% for(var i=0; i<reviw.length; i++){ %>
+                    <div class="review-card-new">
+                        <div class="review-card-top">
+                            <div class="review-avatar"><%=reviw[i].name.charAt(0).toUpperCase()%></div>
+                            <div>
+                                <strong class="review-name"><%=reviw[i].name%></strong>
+                                <span class="review-label">Student</span>
+                            </div>
+                        </div>
+                        <p class="review-text"><%=reviw[i].review%></p>
+                    </div>
+                    <% } %>
+                </div>
+                <% } %>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Search popup -->
+    <div class="popup-confirm" id="popup2">
+        <div class="popup-content">
+            <h2>Search Student</h2>
+            <form action="/search" method="post" id="s-form">
+                <div class="form-group" style="width:93.5%">
+                    <input type="text" name="id" placeholder="Student Email Id" required>
+                </div>
+            </form>
+        </div>
+        <button class="btn cancel-button" onclick="closeSearch()">Cancel</button>
+        <button class="btn confirm-button" onclick="submitSearch()">Search</button>
+    </div>
+
+    <script src="styles/admind.js"></script>
+    <script src="/styles/notifications.js"></script>
+    <script>
+    // Greeting
+    (function(){
+        var h = new Date().getHours();
+        var g = h < 12 ? 'Good Morning' : h < 17 ? 'Good Afternoon' : 'Good Evening';
+        document.getElementById('greetingText').textContent = g + ', Admin!';
+        document.getElementById('dateText').textContent = new Date().toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+    })();
+
+    // Charts
+    Chart.defaults.font.family = "'Poppins', sans-serif";
+    Chart.defaults.font.size = 12;
+    Chart.defaults.plugins.legend.labels.usePointStyle = true;
+
+    // Placement Pie
+    new Chart(document.getElementById('placementPie'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Placed', 'Not Placed'],
+            datasets: [{
+                data: [<%= placedStudents %>, <%= totalStudents - placedStudents %>],
+                backgroundColor: ['#10b981','#e5e7eb'],
+                borderWidth: 0, hoverOffset: 8
+            }]
+        },
+        options: {
+            cutout: '65%', responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { padding: 16 } } }
+        }
+    });
+
+    // Branch Bar
+    new Chart(document.getElementById('branchBar'), {
+        type: 'bar',
+        data: {
+            labels: [<% for(var b=0;b<branchStats.length;b++){%>'<%=branchStats[b].branch%>'<%if(b<branchStats.length-1){%>,<%}%><%}%>],
+            datasets: [{
+                label: 'Students',
+                data: [<% for(var b=0;b<branchStats.length;b++){%><%=branchStats[b].count%><%if(b<branchStats.length-1){%>,<%}%><%}%>],
+                backgroundColor: ['#4361ee','#f59e0b','#8b5cf6','#ec4899','#06b6d4'],
+                borderRadius: 8, borderSkipped: false, barThickness: 40
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, grid: { color: '#f3f4f6' }, ticks: { stepSize: 1 } }, x: { grid: { display: false } } }
+        }
+    });
+
+    // CGPA Distribution
+    new Chart(document.getElementById('cgpaChart'), {
+        type: 'bar',
+        data: {
+            labels: [<% for(var c=0;c<cgpaDist.length;c++){%>'<%=cgpaDist[c].cgpa_range%>'<%if(c<cgpaDist.length-1){%>,<%}%><%}%>],
+            datasets: [{
+                label: 'Students',
+                data: [<% for(var c=0;c<cgpaDist.length;c++){%><%=cgpaDist[c].count%><%if(c<cgpaDist.length-1){%>,<%}%><%}%>],
+                backgroundColor: ['#10b981','#34d399','#6ee7b7','#fbbf24','#f87171'],
+                borderRadius: 8, borderSkipped: false, barThickness: 36
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, grid: { color: '#f3f4f6' }, ticks: { stepSize: 1 } }, x: { grid: { display: false } } }
+        }
+    });
+
+    // Application Status
+    new Chart(document.getElementById('appStatusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: [<% for(var a=0;a<appStats.length;a++){%>'<%=appStats[a].status%>'<%if(a<appStats.length-1){%>,<%}%><%}%>],
+            datasets: [{
+                data: [<% for(var a=0;a<appStats.length;a++){%><%=appStats[a].count%><%if(a<appStats.length-1){%>,<%}%><%}%>],
+                backgroundColor: ['#4361ee','#f59e0b','#10b981','#ef4444','#8b5cf6'],
+                borderWidth: 0, hoverOffset: 8
+            }]
+        },
+        options: {
+            cutout: '60%', responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { padding: 14 } } }
+        }
+    });
+    </script>
+</body>
+</html>

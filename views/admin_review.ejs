@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Requests – Admin | IIITApfolio</title>
+    <link rel="stylesheet" href="/styles/admin_manage.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+</head>
+<body>
+    <div class="page-nav">
+        <a href="/" class="nav-brand"><i class="uil uil-university"></i> IIITApfolio</a>
+        <div class="nav-links">
+            <a href="/adminlog" class="nav-btn"><i class="uil uil-tachometer-fast-alt"></i> Dashboard</a>
+            <a href="/adminlog#companies" class="nav-btn"><i class="uil uil-building"></i> Companies</a>
+            <a href="/adminlog#drives" class="nav-btn"><i class="uil uil-briefcase"></i> Drives</a>
+            <a href="/adminlog#students" class="nav-btn"><i class="uil uil-users-alt"></i> Students</a>
+            <a href="/alogout" class="nav-btn logout"><i class="uil uil-signout"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <div class="page-header">
+            <h1><i class="uil uil-shield-check"></i> Change Requests</h1>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <a href="/admin/review?status=pending" class="filter-tab <%= statusFilter === 'pending' ? 'active' : '' %>">
+                <i class="uil uil-clock-three"></i> Pending
+            </a>
+            <a href="/admin/review?status=approved" class="filter-tab <%= statusFilter === 'approved' ? 'active' : '' %>">
+                <i class="uil uil-check-circle"></i> Approved
+            </a>
+            <a href="/admin/review?status=rejected" class="filter-tab <%= statusFilter === 'rejected' ? 'active' : '' %>">
+                <i class="uil uil-times-circle"></i> Rejected
+            </a>
+            <a href="/admin/review?status=all" class="filter-tab <%= statusFilter === 'all' ? 'active' : '' %>">
+                <i class="uil uil-list-ul"></i> All
+            </a>
+        </div>
+
+        <% if(requests.length === 0){ %>
+        <div class="empty-state">
+            <i class="uil uil-check-circle"></i>
+            <h3>Nothing here</h3>
+            <p>No <%= statusFilter === 'all' ? '' : statusFilter %> requests found.</p>
+        </div>
+        <% } else { %>
+        <div class="requests-list">
+            <% for(var i=0; i<requests.length; i++){ var r = requests[i]; %>
+            <div class="request-card-v2 status-border-<%= r.status %>">
+                <div class="request-card-v2-top">
+                    <div class="request-card-v2-info">
+                        <span class="req-type-badge-v2 type-<%= r.req_type %>"><%= r.req_type.replace('_',' ') %></span>
+                        <h3 class="request-name"><%= r.student_name || r.email %></h3>
+                        <span class="request-email"><%= r.email %></span>
+                    </div>
+                    <span class="app-status-badge app-<%= r.status === 'pending' ? 'applied' : r.status === 'approved' ? 'selected' : 'rejected' %>"><%= r.status %></span>
+                </div>
+                <div class="request-card-v2-body">
+                    <p class="request-reason"><strong>Reason:</strong> <%= r.reason %></p>
+                    <div class="request-meta-row">
+                        <span><i class="uil uil-calendar-alt"></i> <%= new Date(r.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) %></span>
+                        <% if(r.doc_link){ %>
+                        <a href="<%= r.doc_link %>" target="_blank"><i class="uil uil-file-alt"></i> Proof</a>
+                        <% } %>
+                        <% if(r.reviewed_at){ %>
+                        <span><i class="uil uil-check"></i> Reviewed: <%= new Date(r.reviewed_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) %></span>
+                        <% } %>
+                    </div>
+                    <% if(r.admin_remarks){ %>
+                    <p class="admin-remark-text"><i class="uil uil-comment-info"></i> "<%= r.admin_remarks %>"</p>
+                    <% } %>
+                </div>
+                <div class="request-card-v2-actions">
+                    <a href="/admin/review/<%= r.id %>" class="btn-secondary"><i class="uil uil-eye"></i> View Details</a>
+                    <% if(r.status === 'pending'){ %>
+                    <form action="/valid" method="post" style="display:inline" onsubmit="return confirm('Approve?')">
+                        <input type="hidden" name="id" value="<%= r.id %>">
+                        <button type="submit" class="btn-success"><i class="uil uil-check"></i> Approve</button>
+                    </form>
+                    <button type="button" class="btn-danger-sm" onclick="document.getElementById('reject-<%= r.id %>').style.display='flex'">
+                        <i class="uil uil-times"></i> Reject
+                    </button>
+                    <form id="reject-<%= r.id %>" action="/decline" method="post" class="reject-inline" onsubmit="return this.admin_remarks.value.trim() ? true : (alert('Please provide a reason'),false)">
+                        <input type="hidden" name="id" value="<%= r.id %>">
+                        <input type="text" name="admin_remarks" placeholder="Reason..." required>
+                        <button type="submit" class="btn-danger-sm">Confirm</button>
+                        <button type="button" class="btn-secondary" onclick="this.parentElement.style.display='none'">Cancel</button>
+                    </form>
+                    <% } %>
+                </div>
+            </div>
+            <% } %>
+        </div>
+        <% } %>
+    </div>
+</body>
+</html>

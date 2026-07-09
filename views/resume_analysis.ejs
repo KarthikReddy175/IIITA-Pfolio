@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Check - IIITApfolio</title>
+    <link rel="stylesheet" href="/styles/placements.css">
+    <link rel="stylesheet" href="/styles/resume_analysis.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="page-nav">
+        <a href="/" class="nav-brand">
+            <img src="/images/IIITA_Logo.png" style="width:30px;height:25px;" alt=""> IIITApfolio
+        </a>
+        <div class="nav-links">
+            <a href="/placements" class="nav-btn"><i class="uil uil-arrow-left"></i> Placements</a>
+            <a href="/home" class="nav-btn"><i class="uil uil-estate"></i> Dashboard</a>
+            <a href="/logout" class="nav-btn logout"><i class="uil uil-signout"></i> Logout</a>
+        </div>
+    </div>
+
+    <main class="analysis-container">
+        <section class="analysis-hero">
+            <div>
+                <span class="header-eyebrow">AI Resume Check</span>
+                <h1><%= drive ? drive.company_name : 'Resume Analyzer' %></h1>
+                <p><%= drive ? drive.role : 'Role-based resume suggestions' %></p>
+            </div>
+            <% if(result && result.score !== null && result.score !== undefined){ %>
+            <div class="score-card">
+                <span><%= result.score %></span>
+                <small>Role Fit Score</small>
+            </div>
+            <% } %>
+        </section>
+
+        <% if(typeof error !== 'undefined' && error){ %>
+        <section class="analysis-panel error-panel">
+            <i class="uil uil-exclamation-triangle"></i>
+            <div>
+                <h2>Could not analyze this PDF</h2>
+                <p><%= error %></p>
+            </div>
+        </section>
+        <% } else if(result){ %>
+        <section class="analysis-panel summary-panel">
+            <div>
+                <span class="panel-label">Uploaded</span>
+                <strong><%= fileName %></strong>
+            </div>
+            <div>
+                <span class="panel-label">Analyzer</span>
+                <strong><%= modelName %></strong>
+            </div>
+            <% if(drive && drive.package_lpa){ %>
+            <div>
+                <span class="panel-label">Package</span>
+                <strong><%= drive.package_lpa %></strong>
+            </div>
+            <% } %>
+        </section>
+
+        <section class="analysis-panel">
+            <h2>Summary</h2>
+            <p class="analysis-summary"><%= result.summary %></p>
+        </section>
+
+        <div class="analysis-grid">
+            <section class="analysis-panel">
+                <h2><i class="uil uil-check-circle"></i> Strengths</h2>
+                <ul>
+                    <% (result.strengths || []).forEach(function(item){ %>
+                    <li><%= item %></li>
+                    <% }) %>
+                </ul>
+            </section>
+
+            <section class="analysis-panel">
+                <h2><i class="uil uil-search-alt"></i> Missing Keywords</h2>
+                <ul>
+                    <% (result.missing_keywords || []).forEach(function(item){ %>
+                    <li><%= item %></li>
+                    <% }) %>
+                </ul>
+            </section>
+
+            <section class="analysis-panel">
+                <h2><i class="uil uil-wrench"></i> Improvements</h2>
+                <ul>
+                    <% (result.improvements || []).forEach(function(item){ %>
+                    <li><%= item %></li>
+                    <% }) %>
+                </ul>
+            </section>
+
+            <section class="analysis-panel">
+                <h2><i class="uil uil-bolt-alt"></i> Quick Fixes</h2>
+                <ul>
+                    <% (result.quick_fixes || []).forEach(function(item){ %>
+                    <li><%= item %></li>
+                    <% }) %>
+                </ul>
+            </section>
+        </div>
+
+        <section class="analysis-panel">
+            <h2><i class="uil uil-briefcase-alt"></i> Role Fit Notes</h2>
+            <ul>
+                <% (result.role_fit_notes || []).forEach(function(item){ %>
+                <li><%= item %></li>
+                <% }) %>
+            </ul>
+        </section>
+        <% } %>
+    </main>
+</body>
+</html>

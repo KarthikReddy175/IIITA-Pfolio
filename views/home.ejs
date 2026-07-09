@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dashboard – IIITApfolio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/styles/home.css">
+<link rel="stylesheet" href="/styles/notifications.css">
+<link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <%let a=code;if(a==='home'){%>
+    <!-- ===== MODERN NAVBAR ===== -->
+    <nav class="top-navbar">
+        <div class="nav-left">
+            <a href="/" class="nav-brand">
+                <img src="/images/IIITA_Logo.png" alt="logo">
+                <span>IIITApfolio</span>
+            </a>
+        </div>
+        <div class="nav-center">
+            <a href="/home" class="nav-link active"><i class="uil uil-estate"></i> Dashboard</a>
+            <a href="/placements" class="nav-link"><i class="uil uil-suitcase"></i> Placements</a>
+            <a href="/my-requests" class="nav-link"><i class="uil uil-file-check-alt"></i> My Requests</a>
+        </div>
+        <div class="nav-right">
+            <div class="notif-wrapper">
+                <span id="notif-bell"><i class="uil uil-bell"></i><span class="notif-badge">0</span></span>
+                <div id="notif-dropdown">
+                    <div class="notif-header">
+                        <h4>Notifications</h4>
+                        <button id="notif-mark-all">Mark all read</button>
+                    </div>
+                    <div id="notif-list"></div>
+                </div>
+            </div>
+            <div class="profile-wrapper">
+                <span id="profile-icon">
+                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" class="nav-avatar" alt="">
+                </span>
+                <div id="profile-dropdown">
+                    <div class="profile-dd-header">
+                        <strong><%=message.name%></strong>
+                        <span><%=message.email%></span>
+                    </div>
+                    <div class="profile-dd-divider"></div>
+                    <a href="/cpass"><i class="uil uil-lock-alt"></i> Change Password</a>
+                    <a href="/du" onclick="return confirm('Permanently delete your profile? This cannot be undone.')" class="danger-link"><i class="uil uil-trash-alt"></i> Delete Profile</a>
+                    <div class="profile-dd-divider"></div>
+                    <a href="/logout"><i class="uil uil-signout"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <%}%>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="dashboard-container">
+        <div class="row">
+            <!-- LEFT SIDEBAR: Profile Card -->
+            <div class="col-lg-4 col-xl-4">
+                <div class="profile-card">
+                    <div class="profile-card-header">
+                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" class="profile-avatar" alt="avatar">
+                        <h3><%=message.name%></h3>
+                        <span class="role-tag"><%=message.role%></span>
+                    </div>
+                    <div class="profile-card-body">
+                        <p class="about-text"><%=message.about_me%></p>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <i class="uil uil-phone"></i>
+                                <div><label>Mobile</label><span><%=message.phone%></span></div>
+                            </div>
+                            <div class="info-item">
+                                <i class="uil uil-envelope"></i>
+                                <div><label>Email</label><span><%=message.email%></span></div>
+                            </div>
+                            <div class="info-item">
+                                <i class="uil uil-map-marker"></i>
+                                <div><label>Address</label><span><%=message.address%></span></div>
+                            </div>
+                            <div class="info-item">
+                                <i class="uil uil-university"></i>
+                                <div><label>College</label><span>IIIT Allahabad</span></div>
+                            </div>
+                            <div class="info-item">
+                                <i class="uil uil-book-reader"></i>
+                                <div><label>Branch</label><span><%=message.branch%></span></div>
+                            </div>
+                            <div class="info-item">
+                                <i class="uil uil-calendar-alt"></i>
+                                <div><label>Semester</label><span><%=message.cur_sem%></span></div>
+                            </div>
+                        </div>
+                        <div class="marks-row">
+                            <div class="mark-chip">
+                                <span class="mark-label">10th</span>
+                                <span class="mark-value"><%=message.ten_marks%></span>
+                            </div>
+                            <div class="mark-chip">
+                                <span class="mark-label">12th</span>
+                                <span class="mark-value"><%=message.twelve_marks%></span>
+                            </div>
+                            <% if(acad && acad.cur_cgpa){ %>
+                            <div class="mark-chip highlight">
+                                <span class="mark-label">CGPA</span>
+                                <span class="mark-value"><%=acad.cur_cgpa%></span>
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="profile-card-footer">
+                        <% if(message.linkedin){ %>
+                        <a href="<%=message.linkedin%>" target="_blank" class="social-btn linkedin"><i class="fab fa-linkedin-in"></i></a>
+                        <% } %>
+                        <% if(message.github){ %>
+                        <a href="<%=message.github%>" target="_blank" class="social-btn github"><i class="fab fa-github"></i></a>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Skills Card -->
+                <div class="card-section">
+                    <div class="card-section-header">
+                        <h4><i class="uil uil-brackets-curly"></i> Skills</h4>
+                    </div>
+                    <div class="skill-badges">
+                        <% for(let i in skill){%>
+                            <%if(i=='email'||skill[i]==''||skill[i]==null) continue;%>
+                            <span class="skill-badge"><%=skill[i]%></span>
+                        <%}%>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT CONTENT: Tabs -->
+            <div class="col-lg-8 col-xl-8">
+                <div class="card-section">
+                    <div class="tab-bar">
+                        <button class="tab-btn active" data-tab="academic-details"><i class="uil uil-graduation-cap"></i> Academic</button>
+                        <button class="tab-btn" data-tab="non-academic-details"><i class="uil uil-trophy"></i> Non-Academic</button>
+                        <%if(a==='home'){%>
+                        <button class="tab-btn" data-tab="edit"><i class="uil uil-pen"></i> Edit</button>
+                        <button class="tab-btn" data-tab="reset"><i class="uil uil-redo"></i> Reset</button>
+                        <%}%>
+                    </div>
+
+                    <!-- Academic Tab -->
+                    <div class="tab-pane active" id="academic-details">
+                        <div class="section-block">
+                            <h5><i class="uil uil-book-open"></i> Education Overview</h5>
+                            <div class="detail-cards-row">
+                                <% if(acad && acad.cur_cgpa){ %>
+                                <div class="stat-card">
+                                    <div class="stat-icon green"><i class="uil uil-chart-line"></i></div>
+                                    <div class="stat-info">
+                                        <span class="stat-title">CGPA</span>
+                                        <span class="stat-val"><%=acad.cur_cgpa%></span>
+                                    </div>
+                                </div>
+                                <% } %>
+                                <div class="stat-card">
+                                    <div class="stat-icon <%= (acad && acad.backlogs > 0) ? 'red' : 'green' %>"><i class="uil uil-exclamation-triangle"></i></div>
+                                    <div class="stat-info">
+                                        <span class="stat-title">Backlogs</span>
+                                        <span class="stat-val"><%= acad && acad.backlogs != null ? acad.backlogs : '0' %></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-block">
+                            <h5><i class="uil uil-clipboard-notes"></i> Course Work</h5>
+                            <div class="item-list">
+                                <% var cgpaKeys=['C1','C2','C3','C4']; var hasCourse=false; %>
+                                <% for(var ci=0;ci<cgpaKeys.length;ci++){ if(acad && acad[cgpaKeys[ci]]){ hasCourse=true; %>
+                                <div class="list-chip"><i class="uil uil-check-circle"></i> <%=acad[cgpaKeys[ci]]%></div>
+                                <% } } %>
+                                <% if(!hasCourse){ %><p class="empty-text">Not added yet</p><% } %>
+                            </div>
+                        </div>
+
+                        <div class="section-block">
+                            <h5><i class="uil uil-award"></i> Academic Awards</h5>
+                            <div class="item-list">
+                                <% var hasAwards=false; %>
+                                <% if(acad && acad.aw1){ hasAwards=true; %><div class="list-chip"><i class="uil uil-medal"></i> <%=acad.aw1%></div><% } %>
+                                <% if(acad && acad.aw2){ hasAwards=true; %><div class="list-chip"><i class="uil uil-medal"></i> <%=acad.aw2%></div><% } %>
+                                <% if(acad && acad.aw3){ hasAwards=true; %><div class="list-chip"><i class="uil uil-medal"></i> <%=acad.aw3%></div><% } %>
+                                <% if(!hasAwards){ %><p class="empty-text">No awards added yet</p><% } %>
+                            </div>
+                        </div>
+
+                        <div class="section-block">
+                            <h5><i class="uil uil-file-alt"></i> Research Papers</h5>
+                            <div class="item-list">
+                                <% var hasPapers=false; %>
+                                <% if(acad && acad.pap1){ hasPapers=true; %><div class="list-chip"><i class="uil uil-document-info"></i> <%=acad.pap1%></div><% } %>
+                                <% if(acad && acad.pap2){ hasPapers=true; %><div class="list-chip"><i class="uil uil-document-info"></i> <%=acad.pap2%></div><% } %>
+                                <% if(acad && acad.pap3){ hasPapers=true; %><div class="list-chip"><i class="uil uil-document-info"></i> <%=acad.pap3%></div><% } %>
+                                <% if(!hasPapers){ %><p class="empty-text">No papers published yet</p><% } %>
+                            </div>
+                        </div>
+
+                        <div class="section-block">
+                            <h5><i class="uil uil-laptop"></i> Course Projects</h5>
+                            <div class="projects-grid">
+                                <% var projKeys=['p1','p2','p3','p4']; var hasProj=false; %>
+                                <% for(var pi=0;pi<projKeys.length;pi++){ var pval=nacad ? nacad[projKeys[pi]] : null; if(!pval) continue; hasProj=true; %>
+                                <% var pp=pval.split('/'); %>
+                                <div class="project-card">
+                                    <div class="proj-name"><i class="uil uil-folder-open"></i> <%=pp[0]?pp[0].trim():pval%></div>
+                                    <% if(pp[1]){ %><div class="proj-tech"><%=pp[1].trim()%></div><% } %>
+                                    <% if(pp[2]&&pp[2].trim()){ %><a href="<%=pp[2].trim()%>" target="_blank" class="proj-link"><i class="uil uil-external-link-alt"></i> View</a><% } %>
+                                </div>
+                                <% } %>
+                                <% if(!hasProj){ %><p class="empty-text">No projects added yet</p><% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Non-Academic Tab -->
+                    <div class="tab-pane" id="non-academic-details">
+                        <div class="section-block">
+                            <h5><i class="uil uil-code-branch"></i> Coding Profiles</h5>
+                            <div class="coding-profiles">
+                                <% if(nacad && nacad.cp1){ %>
+                                <a href="<%=nacad.cp1%>" target="_blank" class="profile-link-card">
+                                    <i class="uil uil-code-branch"></i><span>LeetCode</span><i class="uil uil-external-link-alt link-arrow"></i>
+                                </a>
+                                <% } %>
+                                <% if(nacad && nacad.cp2){ %>
+                                <a href="<%=nacad.cp2%>" target="_blank" class="profile-link-card">
+                                    <i class="uil uil-code-branch"></i><span>Codeforces</span><i class="uil uil-external-link-alt link-arrow"></i>
+                                </a>
+                                <% } %>
+                                <% if((!nacad||!nacad.cp1)&&(!nacad||!nacad.cp2)){ %><p class="empty-text">No coding profiles added</p><% } %>
+                            </div>
+                        </div>
+
+                        <div class="section-block">
+                            <h5><i class="uil uil-star"></i> Coding Achievements</h5>
+                            <div class="item-list">
+                                <% var hasCpa=false; %>
+                                <% if(nacad&&nacad.cpa1){ hasCpa=true; %><div class="list-chip"><i class="uil uil-trophy"></i> <%=nacad.cpa1%></div><% } %>
+                                <% if(nacad&&nacad.cpa2){ hasCpa=true; %><div class="list-chip"><i class="uil uil-trophy"></i> <%=nacad.cpa2%></div><% } %>
+                                <% if(nacad&&nacad.cpa3){ hasCpa=true; %><div class="list-chip"><i class="uil uil-trophy"></i> <%=nacad.cpa3%></div><% } %>
+                                <% if(!hasCpa){ %><p class="empty-text">No coding achievements added</p><% } %>
+                            </div>
+                        </div>
+
+                        <div class="section-block">
+                            <h5><i class="uil uil-bolt"></i> Hackathons</h5>
+                            <div class="item-list">
+                                <% var hasHack=false; %>
+                                <% if(nacad&&nacad.ha1){ hasHack=true; %><div class="list-chip"><i class="uil uil-rocket"></i> <%=nacad.ha1%></div><% } %>
+                                <% if(nacad&&nacad.ha2){ hasHack=true; %><div class="list-chip"><i class="uil uil-rocket"></i> <%=nacad.ha2%></div><% } %>
+                                <% if(!hasHack){ %><p class="empty-text">No hackathons added</p><% } %>
+                            </div>
+                        </div>
+
+                        <div class="section-block">
+                            <h5><i class="uil uil-users-alt"></i> Co-curricular Activities</h5>
+                            <div class="item-list">
+                                <% var hasCca=false; %>
+                                <% ['cca1','cca2','cca3','cca4','cca5'].forEach(function(k){ if(nacad&&nacad[k]){ hasCca=true; %>
+                                <div class="list-chip"><i class="uil uil-star"></i> <%=nacad[k]%></div>
+                                <% } }); %>
+                                <% if(!hasCca){ %><p class="empty-text">No activities added</p><% } %>
+                            </div>
+                        </div>
+
+                        <div class="section-block">
+                            <h5><i class="uil uil-briefcase-alt"></i> Internships</h5>
+                            <div class="internship-cards">
+                                <% var hasIntern=false; %>
+                                <% if(nacad&&nacad.i1){ hasIntern=true; var ip1=nacad.i1.split('/'); %>
+                                <div class="intern-card">
+                                    <div class="intern-company"><i class="uil uil-building"></i> <%=ip1[0]?ip1[0].trim():nacad.i1%></div>
+                                    <% if(ip1[1]){ %><div class="intern-duration"><i class="uil uil-clock"></i> <%=ip1[1].trim()%></div><% } %>
+                                    <% if(ip1[2]){ %><div class="intern-work"><%=ip1[2].trim()%></div><% } %>
+                                </div>
+                                <% } %>
+                                <% if(nacad&&nacad.i2){ hasIntern=true; var ip2=nacad.i2.split('/'); %>
+                                <div class="intern-card">
+                                    <div class="intern-company"><i class="uil uil-building"></i> <%=ip2[0]?ip2[0].trim():nacad.i2%></div>
+                                    <% if(ip2[1]){ %><div class="intern-duration"><i class="uil uil-clock"></i> <%=ip2[1].trim()%></div><% } %>
+                                    <% if(ip2[2]){ %><div class="intern-work"><%=ip2[2].trim()%></div><% } %>
+                                </div>
+                                <% } %>
+                                <% if(!hasIntern){ %><p class="empty-text">No internships added yet</p><% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Edit Tab -->
+                    <%if(a==='home'){%>
+                    <div class="tab-pane" id="edit">
+                        <p class="tab-desc">Select a section to update your portfolio.</p>
+                        <div class="edit-grid">
+                            <a href="/sb" class="edit-card">
+                                <div class="edit-icon blue"><i class="uil uil-user-circle"></i></div>
+                                <span>Basic Details</span>
+                            </a>
+                            <a href="/acad" class="edit-card">
+                                <div class="edit-icon green"><i class="uil uil-graduation-cap"></i></div>
+                                <span>Academic Details</span>
+                            </a>
+                            <a href="/nacad" class="edit-card">
+                                <div class="edit-icon orange"><i class="uil uil-trophy"></i></div>
+                                <span>Non-Academic</span>
+                            </a>
+                            <a href="/skills" class="edit-card">
+                                <div class="edit-icon purple"><i class="uil uil-brackets-curly"></i></div>
+                                <span>Skills</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Reset Tab -->
+                    <div class="tab-pane" id="reset">
+                        <div class="alert-banner"><i class="uil uil-exclamation-triangle"></i> Resetting permanently clears that section. This cannot be undone.</div>
+                        <div class="edit-grid">
+                            <a href="/reseta" onclick="return confirm('Reset all academic details? This cannot be undone.')" class="edit-card reset-card">
+                                <div class="edit-icon red"><i class="uil uil-trash-alt"></i></div>
+                                <span>Reset Academic</span>
+                            </a>
+                            <a href="/resetna" onclick="return confirm('Reset all non-academic details? This cannot be undone.')" class="edit-card reset-card">
+                                <div class="edit-icon red"><i class="uil uil-trash-alt"></i></div>
+                                <span>Reset Non-Academic</span>
+                            </a>
+                        </div>
+                    </div>
+                    <%}%>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/styles/notifications.js"></script>
+<script>
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+        document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('active'); });
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+});
+// Profile dropdown toggle
+(function(){
+    var icon = document.getElementById('profile-icon');
+    var wrapper = icon ? icon.closest('.profile-wrapper') : null;
+    if(icon && wrapper){
+        icon.addEventListener('click', function(e){
+            e.stopPropagation();
+            wrapper.classList.toggle('open');
+        });
+        document.addEventListener('click', function(e){
+            if(!wrapper.contains(e.target)){
+                wrapper.classList.remove('open');
+            }
+        });
+    }
+})();
+</script>
+</body>
+</html>

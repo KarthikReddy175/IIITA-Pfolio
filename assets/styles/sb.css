@@ -1,0 +1,368 @@
+/* ========================================
+   IIITApfolio – Form Pages (sb, acad, nacad, skills)
+   ======================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+    color: #1a1a2e;
+}
+
+/* ---- Page Nav Bar ---- */
+.page-nav {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    border-bottom: 1px solid #eef0f5;
+    padding: 0 32px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+a.nav-brand {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a2e;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.3px;
+}
+a.nav-brand i { color: #4361ee; }
+a.nav-brand:hover { color: #4361ee; }
+a.back-btn {
+    font-size: 13px;
+    color: #4361ee;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: 8px;
+    background: #eef0ff;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+a.back-btn:hover {
+    background: #4361ee;
+    color: #fff;
+}
+
+/* ---- Main Container ---- */
+.container {
+    position: relative;
+    max-width: 860px;
+    width: 100%;
+    border-radius: 16px;
+    padding: 32px 36px;
+    margin: 28px auto;
+    background-color: #fff;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+}
+.container header {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a2e;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #eef0ff;
+    margin-bottom: 4px;
+}
+
+/* ---- Form note ---- */
+.form-note {
+    font-size: 12px;
+    color: #888;
+    margin: 8px 0 16px 0;
+}
+
+/* ---- Section titles ---- */
+.container form .title {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 20px 0 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ---- Fields Grid ---- */
+.container form .fields {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+form .fields .input-field {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% / 3 - 12px);
+    margin: 0;
+}
+.input-field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 4px;
+    letter-spacing: 0.2px;
+}
+.input-field input,
+.input-field select,
+select {
+    outline: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    border-radius: 8px;
+    border: 1px solid #dde3ec;
+    padding: 0 14px;
+    height: 42px;
+    width: 100%;
+    background: #f8f9fc;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+.input-field input:focus,
+.input-field select:focus,
+select:focus {
+    border-color: #4361ee;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(67,97,238,0.1);
+}
+.input-field input::placeholder {
+    color: #aab;
+    font-weight: 400;
+}
+.input-field select {
+    color: #555;
+    cursor: pointer;
+}
+
+/* ---- Pending Banner ---- */
+.pending-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 16px 0 0;
+}
+.pending-banner i {
+    font-size: 22px;
+    color: #f57f17;
+    margin-top: 2px;
+}
+.pending-banner strong {
+    color: #e65100;
+    font-size: 14px;
+}
+.pending-banner p {
+    font-size: 12px;
+    color: #666;
+    margin: 2px 0 0;
+}
+
+/* ---- Request History ---- */
+.request-history {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+}
+.request-history h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+.req-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: #f8f9fc;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border-left: 3px solid #ddd;
+}
+.req-item.req-pending { border-left-color: #ef6c00; }
+.req-item.req-approved { border-left-color: #2e7d32; }
+.req-item.req-rejected { border-left-color: #c62828; }
+.req-status {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+}
+.req-status.s-pending { background: #fff3e0; color: #ef6c00; }
+.req-status.s-approved { background: #e8f5e9; color: #2e7d32; }
+.req-status.s-rejected { background: #ffebee; color: #c62828; }
+.req-info { flex: 1; }
+.req-info .req-reason { font-size: 12px; color: #555; }
+.req-info .req-date { font-size: 11px; color: #999; }
+.req-info .req-remarks { font-size: 11px; color: #c62828; font-style: italic; margin-top: 2px; }
+
+/* ---- Dynamic rows ---- */
+.proj-row {
+    background: #f8f9fc;
+    border: 1px solid #eef0f5;
+    border-radius: 10px;
+    padding: 14px 16px 6px;
+    margin-bottom: 12px;
+}
+.proj-row-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #4361ee;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.dyn-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.dyn-row > .input-field {
+    flex: 1 1 auto;
+    width: auto !important;
+    max-width: calc(100% - 30px);
+}
+.remove-btn {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: #ffebee;
+    color: #c62828;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+.remove-btn:hover {
+    background: #ef9a9a;
+}
+
+/* ---- Add-More button ---- */
+.add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    color: #4361ee;
+    border: 1.5px dashed #4361ee;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 4px 0 16px 0;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+.add-btn:hover {
+    background: #eef0ff;
+}
+.add-btn:disabled {
+    color: #bbb;
+    border-color: #ddd;
+    cursor: not-allowed;
+}
+
+/* ---- Submit Button ---- */
+.container form button.sumbit,
+.backBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 46px;
+    max-width: 220px;
+    width: 100%;
+    border: none;
+    outline: none;
+    color: #fff;
+    border-radius: 10px;
+    margin: 28px 0;
+    background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+    transition: all 0.3s;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(67,97,238,0.3);
+}
+.container form .btnText {
+    font-size: 14px;
+    font-weight: 600;
+}
+form button.sumbit:hover {
+    background: linear-gradient(135deg, #3a4fd4 0%, #2f0a8a 100%);
+    box-shadow: 0 6px 20px rgba(67,97,238,0.4);
+    transform: translateY(-1px);
+}
+form button i,
+form .backBtn i {
+    margin: 0 4px;
+}
+form .backBtn i {
+    transform: rotate(180deg);
+}
+form .buttons {
+    display: flex;
+    align-items: center;
+}
+form .buttons button,
+.backBtn {
+    margin-right: 14px;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 750px) {
+    .container {
+        margin: 16px;
+        padding: 24px 20px;
+        border-radius: 12px;
+    }
+    .page-nav {
+        padding: 0 16px;
+    }
+    form .fields .input-field {
+        width: calc(50% - 8px);
+    }
+}
+@media (max-width: 550px) {
+    form .fields .input-field {
+        width: 100%;
+    }
+    .container header {
+        font-size: 18px;
+    }
+}

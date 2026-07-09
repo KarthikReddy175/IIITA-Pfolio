@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Requests – IIITApfolio</title>
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',-apple-system,sans-serif; background:#f0f2f5; min-height:100vh; color:#1a1a2e; }
+
+        /* Nav */
+        .page-nav {
+            position:sticky; top:0; z-index:100; display:flex; align-items:center;
+            justify-content:space-between; padding:0 32px; height:60px;
+            background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.06);
+        }
+        .nav-brand { text-decoration:none; color:#1a1a2e; font-size:18px; font-weight:700; display:flex; align-items:center; gap:8px; }
+        .nav-brand img { width:30px; height:25px; }
+        .nav-brand:hover { color:#4361ee; }
+        .nav-links { display:flex; gap:8px; }
+        .nav-btn { text-decoration:none; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:500; color:#555; background:#f5f6fa; transition:all 0.2s; display:flex; align-items:center; gap:6px; }
+        .nav-btn:hover { background:#eef0ff; color:#4361ee; }
+
+        /* Container */
+        .requests-container { max-width:800px; margin:28px auto; padding:0 20px; }
+
+        /* Header */
+        .page-header { margin-bottom:24px; }
+        .page-header h1 { font-size:24px; font-weight:700; color:#1a1a2e; display:flex; align-items:center; gap:10px; }
+        .page-header h1 i { color:#4361ee; }
+        .page-header p { font-size:13px; color:#888; margin-top:4px; }
+
+        /* Filter Pills */
+        .filter-bar { display:flex; gap:8px; margin-bottom:22px; flex-wrap:wrap; }
+        .filter-pill {
+            padding:8px 18px; border-radius:20px; font-size:13px; font-weight:600;
+            text-decoration:none; color:#666; background:#fff;
+            box-shadow:0 1px 4px rgba(0,0,0,0.06); transition:all 0.2s;
+        }
+        .filter-pill:hover { background:#eef0ff; color:#4361ee; }
+        .filter-pill.active { background:#4361ee; color:#fff; box-shadow:0 4px 12px rgba(67,97,238,0.25); }
+
+        /* Request Cards */
+        .req-card {
+            background:#fff; border-radius:14px; padding:20px 22px;
+            margin-bottom:14px; box-shadow:0 2px 10px rgba(0,0,0,0.05);
+            border-left:4px solid #ddd; transition:all 0.2s;
+        }
+        .req-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+        .req-card.status-pending { border-left-color:#f57f17; }
+        .req-card.status-approved { border-left-color:#2e7d32; }
+        .req-card.status-rejected { border-left-color:#c62828; }
+
+        .req-top { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+        .req-type-badge {
+            padding:4px 12px; border-radius:14px; font-size:11px;
+            font-weight:700; text-transform:uppercase; letter-spacing:0.3px;
+        }
+        .req-type-badge.academic { background:#e3f2fd; color:#1565c0; }
+        .req-type-badge.non_academic { background:#f3e5f5; color:#7b1fa2; }
+        .req-status-badge {
+            padding:4px 12px; border-radius:14px; font-size:11px;
+            font-weight:700; text-transform:uppercase;
+        }
+        .req-status-badge.pending { background:#fff8e1; color:#f57f17; }
+        .req-status-badge.approved { background:#e8f5e9; color:#2e7d32; }
+        .req-status-badge.rejected { background:#ffebee; color:#c62828; }
+        .req-date { font-size:12px; color:#aaa; margin-left:auto; display:flex; align-items:center; gap:4px; }
+
+        .req-reason { font-size:13px; color:#555; line-height:1.6; }
+        .req-reason strong { color:#333; font-weight:600; }
+        .admin-remarks {
+            margin-top:10px; padding:12px 16px; background:#fff5f5;
+            border-left:3px solid #e53935; border-radius:8px;
+            font-size:13px; color:#c62828;
+        }
+        .review-date { font-size:11px; color:#bbb; margin-top:8px; display:flex; align-items:center; gap:4px; }
+
+        /* Empty */
+        .empty-state {
+            text-align:center; padding:70px 20px; background:#fff;
+            border-radius:16px; box-shadow:0 2px 10px rgba(0,0,0,0.05);
+        }
+        .empty-state i { font-size:52px; color:#ddd; margin-bottom:14px; display:block; }
+        .empty-state p { font-size:15px; color:#999; }
+    </style>
+</head>
+<body>
+    <div class="page-nav">
+        <a href="/" class="nav-brand">
+            <img src="/images/IIITA_Logo.png" alt=""> IIITApfolio
+        </a>
+        <div class="nav-links">
+            <a href="/home" class="nav-btn"><i class="uil uil-estate"></i> Dashboard</a>
+            <a href="/placements" class="nav-btn"><i class="uil uil-suitcase"></i> Placements</a>
+        </div>
+    </div>
+
+    <div class="requests-container">
+        <div class="page-header">
+            <h1><i class="uil uil-file-check-alt"></i> My Change Requests</h1>
+            <p>Track the status of your profile update requests.</p>
+        </div>
+
+        <div class="filter-bar">
+            <a href="/my-requests" class="filter-pill <%= !status ? 'active' : '' %>"><i class="uil uil-list-ul"></i> All</a>
+            <a href="/my-requests?status=pending" class="filter-pill <%= status === 'pending' ? 'active' : '' %>"><i class="uil uil-clock-three"></i> Pending</a>
+            <a href="/my-requests?status=approved" class="filter-pill <%= status === 'approved' ? 'active' : '' %>"><i class="uil uil-check-circle"></i> Approved</a>
+            <a href="/my-requests?status=rejected" class="filter-pill <%= status === 'rejected' ? 'active' : '' %>"><i class="uil uil-times-circle"></i> Rejected</a>
+        </div>
+
+        <% if(requests.length === 0){ %>
+        <div class="empty-state">
+            <i class="uil uil-file-question"></i>
+            <p>No change requests found.</p>
+        </div>
+        <% } else { %>
+        <% requests.forEach(function(r){ %>
+        <div class="req-card status-<%= r.status %>">
+            <div class="req-top">
+                <span class="req-type-badge <%= r.req_type %>"><%= r.req_type.replace('_',' ') %></span>
+                <span class="req-status-badge <%= r.status %>"><%= r.status %></span>
+                <span class="req-date"><i class="uil uil-calendar-alt"></i> <%= new Date(r.created_at).toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'}) %></span>
+            </div>
+            <div class="req-reason">
+                <strong>Reason:</strong> <%= r.reason %>
+            </div>
+            <% if(r.status === 'rejected' && r.admin_remarks){ %>
+            <div class="admin-remarks">
+                <strong><i class="uil uil-comment-info"></i> Admin:</strong> <%= r.admin_remarks %>
+            </div>
+            <% } %>
+            <% if(r.reviewed_at){ %>
+            <div class="review-date">
+                <i class="uil uil-check"></i> Reviewed: <%= new Date(r.reviewed_at).toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'}) %>
+            </div>
+            <% } %>
+        </div>
+        <% }); %>
+        <% } %>
+    </div>
+</body>
+</html>

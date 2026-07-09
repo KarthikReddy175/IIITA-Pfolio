@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review #<%= request.id %> – Admin | IIITApfolio</title>
+    <link rel="stylesheet" href="/styles/admin_manage.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <%
+    var fieldLabels = {
+        cur_cgpa: 'CGPA', backlogs: 'Backlogs',
+        C1: 'Course 1', C2: 'Course 2', C3: 'Course 3', C4: 'Course 4',
+        aw1: 'Award 1', aw2: 'Award 2', aw3: 'Award 3',
+        pap1: 'Paper 1', pap2: 'Paper 2', pap3: 'Paper 3',
+        p1: 'Project 1', p2: 'Project 2', p3: 'Project 3', p4: 'Project 4',
+        cp1: 'Coding Profile 1', cp2: 'Coding Profile 2',
+        cpa1: 'Coding Achievement 1', cpa2: 'Coding Achievement 2', cpa3: 'Coding Achievement 3',
+        ha1: 'Hackathon 1', ha2: 'Hackathon 2',
+        cca1: 'Co-curricular 1', cca2: 'Co-curricular 2', cca3: 'Co-curricular 3', cca4: 'Co-curricular 4', cca5: 'Co-curricular 5',
+        i1: 'Internship 1', i2: 'Internship 2'
+    };
+    %>
+</head>
+<body>
+    <div class="page-nav">
+        <a href="/" class="nav-brand"><i class="uil uil-university"></i> IIITApfolio</a>
+        <div class="nav-links">
+            <a href="/adminlog#change-requests" class="nav-btn"><i class="uil uil-arrow-left"></i> Back</a>
+            <a href="/adminlog" class="nav-btn"><i class="uil uil-tachometer-fast-alt"></i> Dashboard</a>
+            <a href="/alogout" class="nav-btn logout"><i class="uil uil-signout"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <!-- Review Header -->
+        <div class="review-detail-header">
+            <div class="review-detail-header-top">
+                <div>
+                    <h2>Request #<%= request.id %></h2>
+                    <p class="review-detail-type"><%= request.req_type.replace('_',' ') %> details</p>
+                </div>
+                <span class="app-status-badge app-<%= request.status === 'pending' ? 'applied' : request.status === 'approved' ? 'selected' : 'rejected' %>"><%= request.status %></span>
+            </div>
+            <div class="review-detail-meta">
+                <span><i class="uil uil-user"></i> <%= request.student_name || request.email %></span>
+                <span><i class="uil uil-envelope"></i> <%= request.email %></span>
+                <span><i class="uil uil-calendar-alt"></i> <%= new Date(request.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) %></span>
+                <% if(request.doc_link){ %>
+                <a href="<%= request.doc_link %>" target="_blank"><i class="uil uil-file-alt"></i> Proof Document</a>
+                <% } %>
+            </div>
+            <div class="review-reason-box">
+                <strong>Student's Reason</strong>
+                <p><%= request.reason %></p>
+            </div>
+            <% if(request.admin_remarks){ %>
+            <div class="review-reason-box review-remark-box">
+                <strong>Admin Remarks</strong>
+                <p><%= request.admin_remarks %></p>
+            </div>
+            <% } %>
+        </div>
+
+        <!-- Diff Table -->
+        <div class="diff-card">
+            <div class="diff-card-header">
+                <h3><i class="uil uil-exchange"></i> Changed Fields</h3>
+            </div>
+            <%
+            var allKeys = Object.keys(proposedData);
+            var changedKeys = [];
+            for(var ki=0; ki<allKeys.length; ki++){
+                var key = allKeys[ki];
+                if(key === 'email') continue;
+                var currVal = currentData[key] != null ? String(currentData[key]) : '';
+                var propVal = proposedData[key] != null ? String(proposedData[key]) : '';
+                if(currVal !== propVal) changedKeys.push(key);
+            }
+            %>
+            <% if(changedKeys.length === 0){ %>
+            <div class="diff-empty">
+                <i class="uil uil-check-circle"></i>
+                <p>No fields were changed in this request.</p>
+            </div>
+            <% } else { %>
+            <div class="table-responsive">
+                <table class="diff-table-v2">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Current Value</th>
+                            <th>Proposed Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%
+                        for(var ci=0; ci<changedKeys.length; ci++){
+                            var key = changedKeys[ci];
+                            var currVal = currentData[key] != null ? String(currentData[key]) : '';
+                            var propVal = proposedData[key] != null ? String(proposedData[key]) : '';
+                            var label = fieldLabels[key] || key;
+                        %>
+                        <tr class="diff-row-changed">
+                            <td class="diff-field"><%= label %></td>
+                            <td class="diff-current"><%= currVal || '<em class="diff-empty-val">empty</em>' %></td>
+                            <td class="diff-proposed"><%= propVal || '<em class="diff-empty-val">empty</em>' %></td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <div class="diff-card-footer">
+                <span><span class="diff-dot diff-dot-red"></span> Current (will be replaced)</span>
+                <span><span class="diff-dot diff-dot-green"></span> Proposed (new value)</span>
+                <span class="diff-count"><%= changedKeys.length %> field<%= changedKeys.length !== 1 ? 's' : '' %> modified</span>
+            </div>
+            <% } %>
+        </div>
+
+        <!-- Actions -->
+        <% if(request.status === 'pending'){ %>
+        <div class="action-bar-v2">
+            <form action="/valid" method="post" style="display:inline" onsubmit="return confirm('Approve and apply all changes?')">
+                <input type="hidden" name="id" value="<%= request.id %>">
+                <button type="submit" class="btn-success btn-lg"><i class="uil uil-check"></i> Approve & Apply</button>
+            </form>
+            <form action="/decline" method="post" class="reject-form-inline" onsubmit="return this.admin_remarks.value.trim() ? confirm('Reject?') : (alert('Please provide a reason'),false)">
+                <input type="hidden" name="id" value="<%= request.id %>">
+                <input type="text" name="admin_remarks" placeholder="Reason for rejection (required)..." class="reject-input-v2" required>
+                <button type="submit" class="btn-danger-sm btn-lg"><i class="uil uil-times"></i> Reject</button>
+            </form>
+        </div>
+        <% } %>
+    </div>
+</body>
+</html>

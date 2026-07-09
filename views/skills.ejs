@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skills – IIITApfolio</title>
+    <link rel="stylesheet" href="/styles/sb.css?v=2">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+</head>
+<body>
+    <div class="page-nav">
+        <a href="/" class="nav-brand">
+            <i class="uil uil-university"></i> IIITApfolio
+        </a>
+        <a href="/home" class="back-btn">
+            <i class="uil uil-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="container">
+        <header>Showcase Your Skills</header>
+        <p class="form-note">These appear as badges on your portfolio. Add up to 5 skills.</p>
+
+        <form action="/skills" method="post">
+            <div class="form first">
+                <div class="details personal">
+                    <span class="title">Technical Skills</span>
+
+                    <div id="skill-section">
+                        <div class="dyn-row">
+                            <div class="input-field">
+                                <label>Skill 1</label>
+                                <input type="text" placeholder="e.g. Python" name="one" value="<%= existing ? (existing.one || '') : '' %>">
+                            </div>
+                            <button type="button" class="remove-btn" onclick="removeSkill(this)" title="Remove">−</button>
+                        </div>
+                        <div class="dyn-row" style="<%= (existing && existing.two) ? '' : 'display:none' %>">
+                            <div class="input-field">
+                                <label>Skill 2</label>
+                                <input type="text" placeholder="e.g. React" name="two" value="<%= existing ? (existing.two || '') : '' %>">
+                            </div>
+                            <button type="button" class="remove-btn" onclick="removeSkill(this)" title="Remove">−</button>
+                        </div>
+                        <div class="dyn-row" style="<%= (existing && existing.three) ? '' : 'display:none' %>">
+                            <div class="input-field">
+                                <label>Skill 3</label>
+                                <input type="text" placeholder="e.g. Node.js" name="three" value="<%= existing ? (existing.three || '') : '' %>">
+                            </div>
+                            <button type="button" class="remove-btn" onclick="removeSkill(this)" title="Remove">−</button>
+                        </div>
+                        <div class="dyn-row" style="<%= (existing && existing.four) ? '' : 'display:none' %>">
+                            <div class="input-field">
+                                <label>Skill 4</label>
+                                <input type="text" placeholder="e.g. MySQL" name="four" value="<%= existing ? (existing.four || '') : '' %>">
+                            </div>
+                            <button type="button" class="remove-btn" onclick="removeSkill(this)" title="Remove">−</button>
+                        </div>
+                        <div class="dyn-row" style="<%= (existing && existing.five) ? '' : 'display:none' %>">
+                            <div class="input-field">
+                                <label>Skill 5</label>
+                                <input type="text" placeholder="e.g. Docker" name="five" value="<%= existing ? (existing.five || '') : '' %>">
+                            </div>
+                            <button type="button" class="remove-btn" onclick="removeSkill(this)" title="Remove">−</button>
+                        </div>
+                    </div>
+                    <button type="button" class="add-btn" id="add-skill" onclick="addSkill()">+ Add Skill</button>
+
+                    <button class="sumbit" type="submit" onclick="return confirm('Save your skills?')">
+                        <span class="btnText">Save Skills</span>
+                        <i class="uil uil-navigator"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        var addSkillBtn = document.getElementById('add-skill');
+
+        function addSkill() {
+            var section = document.getElementById('skill-section');
+            var rows = section.querySelectorAll('.dyn-row');
+            for (var i = 0; i < rows.length; i++) {
+                if (rows[i].style.display === 'none') {
+                    rows[i].style.display = '';
+                    rows[i].querySelector('input').focus();
+                    // Disable add btn if no more hidden rows
+                    var hasMore = Array.from(rows).slice(i+1).some(function(r){ return r.style.display === 'none'; });
+                    if (!hasMore) addSkillBtn.disabled = true;
+                    return;
+                }
+            }
+        }
+
+        function removeSkill(btn) {
+            var row = btn.closest('.dyn-row');
+            row.querySelector('input').value = '';
+            row.style.display = 'none';
+            addSkillBtn.disabled = false;
+        }
+
+        // On load: disable add if all rows already visible
+        (function(){
+            var section = document.getElementById('skill-section');
+            var hasHidden = Array.from(section.querySelectorAll('.dyn-row')).some(function(r){ return r.style.display === 'none'; });
+            if (!hasHidden) addSkillBtn.disabled = true;
+        })();
+    </script>
+    <script src="/styles/sb.js"></script>
+</body>
+</html>

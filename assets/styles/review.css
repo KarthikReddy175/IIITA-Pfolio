@@ -1,0 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+html,body{
+  display: grid;
+  height: 100%;
+  place-items: center;
+  text-align: center;
+  background: #f0f2f5;
+}
+.container{
+  position: relative;
+  width: 420px;
+  background: #fff;
+  padding: 32px 36px;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(67,97,238,.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.card-header-area{
+  margin-bottom: 20px;
+}
+.icon-circle{
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#4361ee,#3a0ca3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.icon-circle i{
+  font-size: 22px;
+  color: #fff;
+}
+.card-header-area h2{
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+.card-header-area .subtitle{
+  font-size: 14px;
+  color: #888;
+  font-weight: 400;
+}
+.container .post{
+  display: none;
+}
+.container .text{
+  font-size: 20px;
+  color: #1a1a2e;
+  font-weight: 600;
+}
+.container .edit{
+  position: absolute;
+  right: 16px;
+  top: 12px;
+  font-size: 13px;
+  color: #4361ee;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 8px;
+  transition: background .2s;
+}
+.container .edit:hover{
+  background: #eef0ff;
+}
+.container .star-widget input{
+  display: none;
+}
+.star-widget label{
+  font-size: 36px;
+  color: #d0d5dd;
+  padding: 8px;
+  float: right;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+input:not(:checked) ~ label:hover,
+input:not(:checked) ~ label:hover ~ label{
+  color: #fbbf24;
+}
+input:checked ~ label{
+  color: #f59e0b;
+}
+input#rate-5:checked ~ label{
+  color: #f59e0b;
+  text-shadow: 0 0 16px rgba(245,158,11,.4);
+}
+#rate-1:checked ~ form header:before{
+  content: "I just hate it 😣";
+}
+#rate-2:checked ~ form header:before{
+  content: "I don't like it 😕";
+}
+#rate-3:checked ~ form header:before{
+  content: "It is awesome 😊";
+}
+#rate-4:checked ~ form header:before{
+  content: "I just like it 😄";
+}
+#rate-5:checked ~ form header:before{
+  content: "I just love it 🥰";
+}
+.container form{
+  display: none;
+}
+input:checked ~ form{
+  display: block;
+}
+form header{
+  width: 100%;
+  font-size: 20px;
+  color: #f59e0b;
+  font-weight: 600;
+  margin: 5px 0 20px 0;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+form .textarea{
+  height: 100px;
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+form .textarea textarea{
+  height: 100%;
+  width: 100%;
+  outline: none;
+  color: #1a1a2e;
+  border: 2px solid #e8e8e8;
+  background: #f8f9fc;
+  padding: 12px 14px;
+  font-size: 15px;
+  resize: none;
+  border-radius: 10px;
+  transition: border-color .2s, box-shadow .2s;
+  font-family: 'Inter', sans-serif;
+}
+.textarea textarea:focus{
+  border-color: #4361ee;
+  box-shadow: 0 0 0 3px rgba(67,97,238,.12);
+}
+form .btn{
+  height: 45px;
+  width: 100%;
+  margin: 12px 0 0;
+}
+form .btn button{
+  height: 100%;
+  width: 100%;
+  border: none;
+  outline: none;
+  background: linear-gradient(135deg,#4361ee,#3a0ca3);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 10px;
+  letter-spacing: .5px;
+  transition: opacity .2s, transform .15s;
+}
+form .btn button:hover{
+  opacity: .9;
+  transform: translateY(-1px);
+}
+@media(max-width:480px){
+  .container{ width: 92vw; padding: 24px 20px; }
+}

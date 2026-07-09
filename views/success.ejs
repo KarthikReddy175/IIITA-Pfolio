@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success – IIITApfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Inter',sans-serif; background:#f0f2f5; min-height:100vh; display:flex; align-items:center; justify-content:center; }
+        .card {
+            background:#fff; border-radius:20px; padding:48px 40px;
+            text-align:center; max-width:440px; width:90%;
+            box-shadow:0 8px 32px rgba(0,0,0,0.08);
+        }
+        .icon-circle {
+            width:90px; height:90px; border-radius:50%;
+            background:linear-gradient(135deg,#43e97b 0%,#38f9d7 100%);
+            margin:0 auto 24px; display:flex; align-items:center; justify-content:center;
+            box-shadow:0 8px 24px rgba(67,233,123,0.3);
+        }
+        .icon-circle i { font-size:42px; color:#fff; }
+        h1 { font-size:24px; font-weight:700; color:#1a1a2e; margin-bottom:10px; }
+        p { font-size:14px; color:#666; line-height:1.6; margin-bottom:28px; }
+        .btn {
+            display:inline-flex; align-items:center; gap:8px;
+            padding:12px 32px; border:none; border-radius:10px;
+            background:linear-gradient(135deg,#4361ee 0%,#3a0ca3 100%);
+            color:#fff; font-size:14px; font-weight:600; text-decoration:none;
+            cursor:pointer; transition:all 0.2s; font-family:inherit;
+            box-shadow:0 4px 14px rgba(67,97,238,0.3);
+        }
+        .btn:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(67,97,238,0.4); }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon-circle"><i class="uil uil-check"></i></div>
+        <h1>Success!</h1>
+        <p><%=message%></p>
+        <a href="/<%=code%>" class="btn"><i class="uil uil-arrow-right"></i> Continue</a>
+    </div>
+</body>
+</html>

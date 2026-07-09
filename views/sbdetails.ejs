@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Details – IIITApfolio</title>
+    <link rel="stylesheet" href="/styles/sb.css?v=2">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+</head>
+<body>
+    <div class="page-nav">
+        <a href="/" class="nav-brand">
+            <i class="uil uil-university"></i> IIITApfolio
+        </a>
+        <a href="/home" class="back-btn">
+            <i class="uil uil-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="container">
+        <header><%= existing ? 'Edit Basic Details' : 'Complete Your Profile' %></header>
+        <p class="form-note">Logged in as: <strong><%= email %></strong> &nbsp;|&nbsp; All fields are mandatory.</p>
+
+        <form action="/sb" method="post">
+            <input type="hidden" name="email" value="<%= email %>">
+            <div class="form first">
+                <div class="details personal">
+                    <span class="title">Personal Information</span>
+                    <div class="fields">
+                        <div class="input-field">
+                            <label>Full Name</label>
+                            <input type="text" placeholder="Enter your full name" name="name" value="<%= existing ? (existing.name || '') : '' %>" required>
+                        </div>
+                        <div class="input-field">
+                            <label>Role / Designation <small style="color:#888;">(max 20 chars)</small></label>
+                            <input type="text" placeholder="e.g. Full Stack Dev" name="role" maxlength="20" value="<%= existing ? (existing.role || '') : '' %>" required>
+                        </div>
+                        <div class="input-field">
+                            <label>About You</label>
+                            <input type="text" placeholder="A brief description about yourself" name="about_me" value="<%= existing ? (existing.about_me || '') : '' %>" required>
+                        </div>
+                        <div class="input-field">
+                            <label>Mobile Number</label>
+                            <input type="text" placeholder="10-digit mobile number" name="phone" pattern="[0-9]{10}" title="Enter a valid 10-digit number" value="<%= existing ? (existing.phone || '') : '' %>" required>
+                        </div>
+                        <div class="input-field">
+                            <label>Address</label>
+                            <input type="text" placeholder="City, State" name="address" value="<%= existing ? (existing.address || '') : '' %>" required>
+                        </div>
+                    </div>
+
+                    <span class="title">Academic Basics</span>
+                    <div class="fields">
+                        <div class="input-field">
+                            <label>Branch</label>
+                            <select name="branch" required>
+                                <option value="" disabled <%= (!existing || !existing.branch) ? 'selected' : '' %>>Select Branch</option>
+                                <option value="IT" <%= (existing && existing.branch === 'IT') ? 'selected' : '' %>>IT</option>
+                                <option value="ECE" <%= (existing && existing.branch === 'ECE') ? 'selected' : '' %>>ECE</option>
+                                <option value="IT-BI" <%= (existing && existing.branch === 'IT-BI') ? 'selected' : '' %>>IT-BI</option>
+                            </select>
+                        </div>
+                        <div class="input-field">
+                            <label>Current Semester</label>
+                            <input type="text" placeholder="e.g. Semester 8" name="cur_sem" value="<%= existing ? (existing.cur_sem || '') : '' %>" required>
+                        </div>
+                        <div class="input-field">
+                            <label>10th Grade Marks / %</label>
+                            <input type="text" placeholder="e.g. 92%" name="ten_marks" value="<%= existing ? (existing.ten_marks || '') : '' %>" required>
+                        </div>
+                        <div class="input-field">
+                            <label>12th Grade Marks / %</label>
+                            <input type="text" placeholder="e.g. 88%" name="twelve_marks" value="<%= existing ? (existing.twelve_marks || '') : '' %>" required>
+                        </div>
+                    </div>
+
+                    <span class="title">Social Links <small style="font-size:11px;color:#888;">(optional)</small></span>
+                    <div class="fields">
+                        <div class="input-field">
+                            <label>LinkedIn Profile URL</label>
+                            <input type="text" placeholder="https://linkedin.com/in/..." name="linkedin" value="<%= existing ? (existing.linkedin || '') : '' %>">
+                        </div>
+                        <div class="input-field">
+                            <label>GitHub Profile URL</label>
+                            <input type="text" placeholder="https://github.com/..." name="github" value="<%= existing ? (existing.github || '') : '' %>">
+                        </div>
+                    </div>
+
+                    <button class="sumbit" type="submit">
+                        <span class="btnText"><%= existing ? 'Update Details' : 'Save & Continue' %></span>
+                        <i class="uil uil-navigator"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="/styles/sb.js"></script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Details – IIITApfolio</title>
+    <link rel="stylesheet" href="/styles/sb.css?v=2">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+</head>
+<body>
+    <div class="page-nav">
+        <a href="/" class="nav-brand">
+            <i class="uil uil-university"></i> IIITApfolio
+        </a>
+        <a href="/home" class="back-btn">
+            <i class="uil uil-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="container">
+        <header>Academic Details</header>
+        <p class="form-note">Changes require admin verification via document proof.</p>
+
+        <form action="/acad" method="post" id="acadForm">
+            <div class="form first">
+                <div class="details personal">
+
+                    <!-- CGPA -->
+                    <span class="title">Current CGPA</span>
+                    <div class="fields">
+                        <div class="input-field">
+                            <label>CGPA</label>
+                            <input type="number" step="0.01" min="0" max="10" placeholder="e.g. 8.5" name="cur_cgpa" value="<%= existing ? (existing.cur_cgpa || '') : '' %>">
+                        </div>
+                        <div class="input-field">
+                            <label>Number of Backlogs</label>
+                            <input type="number" min="0" max="50" placeholder="e.g. 0" name="backlogs" value="<%= existing ? (existing.backlogs != null ? existing.backlogs : '0') : '0' %>">
+                        </div>
+                    </div>
+
+                    <!-- Course Work -->
+                    <span class="title" style="margin-top:20px;">Course Work <small style="font-size:11px;color:#888;">(subjects you've studied)</small></span>
+                    <div id="course-section">
+                        <div class="dyn-row">
+                            <div class="input-field">
+                                <label>Course 1</label>
+                                <input type="text" placeholder="e.g. Digital Signal Processing" name="c1" value="<%= existing ? (existing.C1 || '') : '' %>">
+                            </div>
+                            <button type="button" class="remove-btn" onclick="removeRow(this,'course-section')" title="Remove">−</button>
+                        </div>
+                        <div class="dyn-row" style="<%= (existing && existing.C2) ? '' : 'display:none' %>">
+                            <div class="input-field">
+                                <label>Course 2</label>
+                                <input type="text" placeholder="e.g. VLSI Design" name="c2" value="<%= existing ? (existing.C2 || '') : '' %>">
+                            </div>
+                            <button type="button" class="remove-btn" onclick="removeRow(this,'course-section')" title="Remove">−</button>
+                        </div>
+                        <div class="dyn-row" style="<%= (existing && existing.C3) ? '' : 'display:none' %>">
+                            <div class="input-field">
+                                <label>Course 3</label>
+                                <input type="text" placeholder="e.g. Embedded Systems" name="c3" value="<%= existing ? (existing.C3 || '') : '' %>">
+                            </div>
+                            <button type="button" class="remove-btn" onclick="removeRow(this,'course-section')" title="Remove">−</button>
+                        </div>
+                        <div class="dyn-row" style="<%= (existing && existing.C4) ? '' : 'display:none' %>">
+                            <div class="input-field">
+                                <label>Course 4</label>
+                                <input type="text" placeholder="e.g. Computer Networks" name="c4" value="<%= existing ? (existing.C4 || '') : '' %>">
+                            </div>
+                            <button type="button" class="remove-btn" onclick="removeRow(this,'course-section')" title="Remove">−</button>
+                        </div>
+                    </div>
+                    <button type="button" class="add-btn" id="add-course" onclick="addRow('course-section','add-course')">+ Add Course</button>
+
+                    <!-- Academic Awards -->
+                    <span class="title" style="margin-top:24px;">Academic Awards &amp; Achievements</span>
+                    <div id="award-section">
+                        <div class="dyn-row">
+                            <div class="input-field">
+                                <label>Award 1</label>
+                                <input type="text" placeholder="e.g. Director's Gold Medal 2024" name="aw1" value="<%= existing ? (existing.aw1 || '') : '' %>">
+                            </div>
+                            <button type="button" class="remove-btn" onclick="removeRow(this,'award-section')" title="Remove">−</button>
+                        </div>
+                        <div class="dyn-row" style="<%= (existing && existing.aw2) ? '' : 'display:none' %>">
+                            <div class="input-field">
+                                <label>Award 2</label>
+                                <input type="text" placeholder="e.g. Merit Scholarship 2023" name="aw2" value="<%= existing ? (existing.aw2 || '') : '' %>">
+                            </div>
+                            <button type="button" class="remove-btn" onclick="removeRow(this,'award-section')" title="Remove">−</button>
+                        </div>
+                        <div class="dyn-row" style="<%= (existing && existing.aw3) ? '' : 'display:none' %>">
+                            <div class="input-field">
+                                <label>Award 3</label>
+                                <input type="text" placeholder="e.g. Best Project Award IIITA" name="aw3" value="<%= existing ? (existing.aw3 || '') : '' %>">
+                            </div>
+                            <button type="button" class="remove-btn" onclick="removeRow(this,'award-section')" title="Remove">−</button>
+                        </div>
+                    </div>
+                    <button type="button" class="add-btn" id="add-award" onclick="addRow('award-section','add-award')">+ Add Award</button>
+
+                    <!-- Research Papers -->
+                    <span class="title" style="margin-top:24px;">Research Papers / Publications</span>
+                    <div id="paper-section">
+                        <div class="dyn-row">
+                            <div class="input-field">
+                                <label>Paper 1</label>
+                                <input type="text" placeholder="Title of paper or conference name" name="pap1" value="<%= existing ? (existing.pap1 || '') : '' %>">
+                            </div>
+                            <button type="button" class="remove-btn" onclick="removeRow(this,'paper-section')" title="Remove">−</button>
+                        </div>
+                        <div class="dyn-row" style="<%= (existing && existing.pap2) ? '' : 'display:none' %>">
+                            <div class="input-field">
+                                <label>Paper 2</label>
+                                <input type="text" placeholder="Title of paper or conference name" name="pap2" value="<%= existing ? (existing.pap2 || '') : '' %>">
+                            </div>
+                            <button type="button" class="remove-btn" onclick="removeRow(this,'paper-section')" title="Remove">−</button>
+                        </div>
+                        <div class="dyn-row" style="<%= (existing && existing.pap3) ? '' : 'display:none' %>">
+                            <div class="input-field">
+                                <label>Paper 3</label>
+                                <input type="text" placeholder="Title of paper or conference name" name="pap3" value="<%= existing ? (existing.pap3 || '') : '' %>">
+                            </div>
+                            <button type="button" class="remove-btn" onclick="removeRow(this,'paper-section')" title="Remove">−</button>
+                        </div>
+                    </div>
+                    <button type="button" class="add-btn" id="add-paper" onclick="addRow('paper-section','add-paper')">+ Add Paper</button>
+
+                    <!-- Drive Proof -->
+                    <span class="title" style="margin-top:24px;">Verification Details <span style="color:#e53935;font-size:12px;">(required for admin review)</span></span>
+                    <div class="fields">
+                        <div class="input-field" style="width:100%">
+                            <label>Reason for Changes *</label>
+                            <input type="text" placeholder="e.g. Updated CGPA after Sem 7 results" name="reason" required>
+                        </div>
+                        <div class="input-field" style="width:100%">
+                            <label>Proof Link (Google Drive / URL)</label>
+                            <input type="text" placeholder="https://drive.google.com/..." name="doc">
+                        </div>
+                    </div>
+
+                    <% if(typeof pendingRequest !== 'undefined' && pendingRequest){ %>
+                    <div class="pending-banner">
+                        <i class="uil uil-clock-three"></i>
+                        <div>
+                            <strong>You have a pending request</strong>
+                            <p>Submitted on <%= new Date(pendingRequest.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) %> — "<%= pendingRequest.reason %>"</p>
+                            <p style="font-size:11px;color:#888;">New submissions will replace the previous pending request.</p>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <button class="sumbit" type="submit" onclick="return confirm('Submit academic details for admin verification?')">
+                        <span class="btnText">Submit for Verification</span>
+                        <i class="uil uil-navigator"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function addRow(sectionId, btnId) {
+            const section = document.getElementById(sectionId);
+            const rows = section.querySelectorAll('.dyn-row');
+            for (let i = 0; i < rows.length; i++) {
+                if (rows[i].style.display === 'none') {
+                    rows[i].style.display = '';
+                    rows[i].querySelector('input').focus();
+                    // If this was the last hidden row, disable add btn
+                    const nextHidden = Array.from(rows).slice(i+1).some(r => r.style.display === 'none');
+                    if (!nextHidden) {
+                        const btn = document.getElementById(btnId);
+                        if (btn) btn.disabled = true;
+                    }
+                    return;
+                }
+            }
+        }
+
+        function removeRow(btn, sectionId) {
+            const row = btn.closest('.dyn-row');
+            row.querySelector('input').value = '';
+            row.style.display = 'none';
+            // Re-enable the add button for this section
+            const section = document.getElementById(sectionId);
+            const addBtn = section.nextElementSibling;
+            if (addBtn && addBtn.classList.contains('add-btn')) {
+                addBtn.disabled = false;
+            }
+        }
+
+        // On load: disable add btn if all rows already visible
+        document.querySelectorAll('.add-btn').forEach(function(btn) {
+            const onclick = btn.getAttribute('onclick');
+            const match = onclick && onclick.match(/addRow\('([^']+)'/);
+            if (match) {
+                const section = document.getElementById(match[1]);
+                if (section) {
+                    const hasHidden = Array.from(section.querySelectorAll('.dyn-row')).some(r => r.style.display === 'none');
+                    if (!hasHidden) btn.disabled = true;
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

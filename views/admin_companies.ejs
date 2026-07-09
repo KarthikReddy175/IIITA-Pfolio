@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Companies – Admin | IIITApfolio</title>
+    <link rel="stylesheet" href="/styles/admin_manage.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+</head>
+<body>
+    <div class="page-nav">
+        <a href="/" class="nav-brand"><i class="uil uil-university"></i> IIITApfolio</a>
+        <div class="nav-links">
+            <a href="/adminlog" class="nav-btn"><i class="uil uil-tachometer-fast-alt"></i> Dashboard</a>
+            <a href="/adminlog#drives" class="nav-btn"><i class="uil uil-briefcase"></i> Drives</a>
+            <a href="/adminlog#students" class="nav-btn"><i class="uil uil-users-alt"></i> Students</a>
+            <a href="/alogout" class="nav-btn logout"><i class="uil uil-signout"></i> Logout</a>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <div class="page-header">
+            <div>
+                <h1><i class="uil uil-building"></i> Manage Companies</h1>
+                <p class="header-subtitle">Add, view and manage recruiting companies</p>
+            </div>
+            <button class="btn-primary" onclick="toggleForm()">
+                <i class="uil uil-plus"></i> Add Company
+            </button>
+        </div>
+
+        <!-- Add Company Form -->
+        <div id="addForm" class="form-card" style="display:none">
+            <div class="form-card-header">
+                <h3><i class="uil uil-plus-circle"></i> Add New Company</h3>
+                <button class="form-close-btn" onclick="toggleForm()">&times;</button>
+            </div>
+            <form action="/admin/companies" method="post">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Company Name *</label>
+                        <input type="text" name="name" placeholder="e.g. Google India" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Website</label>
+                        <input type="text" name="website" placeholder="https://careers.google.com">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Description</label>
+                        <textarea name="description" rows="3" placeholder="Brief description about the company..."></textarea>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary"><i class="uil uil-check"></i> Add Company</button>
+                    <button type="button" class="btn-secondary" onclick="toggleForm()">Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Companies List -->
+        <% if(companies.length === 0){ %>
+        <div class="empty-state">
+            <i class="uil uil-building"></i>
+            <h3>No Companies Yet</h3>
+            <p>Click "Add Company" to register your first recruiting company.</p>
+        </div>
+        <% } else { %>
+        <div class="companies-grid">
+            <% for(var i=0; i<companies.length; i++){ var c = companies[i]; %>
+            <div class="company-card">
+                <div class="company-card-icon">
+                    <span><%= c.name.charAt(0).toUpperCase() %></span>
+                </div>
+                <div class="company-card-body">
+                    <h3><%= c.name %></h3>
+                    <% if(c.website){ %>
+                    <a href="<%= c.website %>" target="_blank" class="company-link"><i class="uil uil-external-link-alt"></i> <%= c.website %></a>
+                    <% } %>
+                    <% if(c.description){ %>
+                    <p class="company-desc"><%= c.description %></p>
+                    <% } %>
+                </div>
+                <div class="company-card-footer">
+                    <span class="company-id">ID: <%= c.id %></span>
+                    <form action="/admin/companies/delete" method="post" style="display:inline" onsubmit="return confirm('Delete this company? All associated drives will also be deleted.')">
+                        <input type="hidden" name="id" value="<%= c.id %>">
+                        <button type="submit" class="btn-danger-sm"><i class="uil uil-trash-alt"></i> Delete</button>
+                    </form>
+                </div>
+            </div>
+            <% } %>
+        </div>
+        <% } %>
+    </div>
+
+    <script>
+    function toggleForm(){
+        var f = document.getElementById('addForm');
+        f.style.display = f.style.display === 'none' ? 'block' : 'none';
+    }
+    </script>
+</body>
+</html>

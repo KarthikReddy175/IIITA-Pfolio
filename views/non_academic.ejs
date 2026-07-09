@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Non-Academic Details – IIITApfolio</title>
+    <link rel="stylesheet" href="/styles/sb.css?v=2">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+</head>
+<body>
+    <div class="page-nav">
+        <a href="/" class="nav-brand">
+            <i class="uil uil-university"></i> IIITApfolio
+        </a>
+        <a href="/home" class="back-btn">
+            <i class="uil uil-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="container">
+        <header>Non-Academic Achievements</header>
+        <p class="form-note">Changes require admin verification via document proof.</p>
+
+        <form action="/nacad" method="post" id="nacadForm">
+
+            <!-- ===== PROJECTS ===== -->
+            <div class="details personal">
+                <span class="title">Projects</span>
+                <p class="form-note" style="margin-bottom:8px;">Fill the first project. Click "Add Project" to add more (max 4).</p>
+
+                <% var pParsed = []; %>
+                <% var pKeys = ['p1','p2','p3','p4']; %>
+                <% for(var pi=0; pi<pKeys.length; pi++){ %>
+                <%   var pval = existing ? (existing[pKeys[pi]] || '') : ''; %>
+                <%   var pp = pval ? pval.split('/') : []; %>
+                <%   pParsed.push({ name: pp[0]||'', tech: pp[1]||'', link: pp[2]||'', has: !!pval }); %>
+                <% } %>
+
+                <div id="project-section">
+                    <% for(var pi=0; pi<4; pi++){ %>
+                    <div class="proj-row" style="<%= (pi===0 || pParsed[pi].has) ? '' : 'display:none' %>">
+                        <div class="proj-row-label">Project <%= pi+1 %></div>
+                        <div class="fields">
+                            <div class="input-field">
+                                <label>Project Name</label>
+                                <input type="text" placeholder="e.g. Smart Home Automation" name="p<%= pi+1 %>_name" value="<%= pParsed[pi].name %>" <%= pi===0 ? 'required' : '' %>>
+                            </div>
+                            <div class="input-field">
+                                <label>Tech Stack</label>
+                                <input type="text" placeholder="e.g. React, Node.js, MySQL" name="p<%= pi+1 %>_tech" value="<%= pParsed[pi].tech %>">
+                            </div>
+                            <div class="input-field">
+                                <label>Live Link / GitHub</label>
+                                <input type="text" placeholder="https://github.com/..." name="p<%= pi+1 %>_link" value="<%= pParsed[pi].link %>">
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+                <button type="button" class="add-btn" onclick="addProjRow()">+ Add Project</button>
+
+                <!-- ===== CODING PROFILES ===== -->
+                <span class="title" style="margin-top:20px;">Coding Profiles</span>
+                <div class="fields">
+                    <div class="input-field">
+                        <label>LeetCode Profile URL</label>
+                        <input type="text" placeholder="https://leetcode.com/username" name="cp1" value="<%= existing ? (existing.cp1||'') : '' %>">
+                    </div>
+                    <div class="input-field">
+                        <label>Codeforces / Other URL</label>
+                        <input type="text" placeholder="https://codeforces.com/profile/username" name="cp2" value="<%= existing ? (existing.cp2||'') : '' %>">
+                    </div>
+                </div>
+
+                <!-- ===== CODING ACHIEVEMENTS ===== -->
+                <span class="title" style="margin-top:20px;">Coding Achievements</span>
+                <div id="cpa-section">
+                    <div class="dyn-row">
+                        <div class="input-field" style="flex:1">
+                            <label>Achievement 1</label>
+                            <input type="text" placeholder="e.g. LeetCode 500+ problems solved" name="cpa1" value="<%= existing ? (existing.cpa1||'') : '' %>">
+                        </div>
+                        <button type="button" class="remove-btn" onclick="removeRow(this)" title="Remove">−</button>
+                    </div>
+                    <div class="dyn-row" style="<%= (existing && existing.cpa2) ? '' : 'display:none' %>">
+                        <div class="input-field" style="flex:1">
+                            <label>Achievement 2</label>
+                            <input type="text" placeholder="e.g. Codeforces Expert rated" name="cpa2" value="<%= existing ? (existing.cpa2||'') : '' %>">
+                        </div>
+                        <button type="button" class="remove-btn" onclick="removeRow(this)" title="Remove">−</button>
+                    </div>
+                    <div class="dyn-row" style="<%= (existing && existing.cpa3) ? '' : 'display:none' %>">
+                        <div class="input-field" style="flex:1">
+                            <label>Achievement 3</label>
+                            <input type="text" placeholder="Achievement 3" name="cpa3" value="<%= existing ? (existing.cpa3||'') : '' %>">
+                        </div>
+                        <button type="button" class="remove-btn" onclick="removeRow(this)" title="Remove">−</button>
+                    </div>
+                </div>
+                <button type="button" class="add-btn" onclick="addRow('cpa-section', 3)">+ Add Achievement</button>
+
+                <!-- ===== HACKATHONS ===== -->
+                <span class="title" style="margin-top:20px;">Hackathons</span>
+                <div id="hack-section">
+                    <div class="dyn-row">
+                        <div class="input-field" style="flex:1">
+                            <label>Hackathon 1</label>
+                            <input type="text" placeholder="e.g. Smart India Hackathon 2024 – Winner" name="ha1" value="<%= existing ? (existing.ha1||'') : '' %>">
+                        </div>
+                        <button type="button" class="remove-btn" onclick="removeRow(this)" title="Remove">−</button>
+                    </div>
+                    <div class="dyn-row" style="<%= (existing && existing.ha2) ? '' : 'display:none' %>">
+                        <div class="input-field" style="flex:1">
+                            <label>Hackathon 2</label>
+                            <input type="text" placeholder="e.g. HackIIIT 2024 – Runner Up" name="ha2" value="<%= existing ? (existing.ha2||'') : '' %>">
+                        </div>
+                        <button type="button" class="remove-btn" onclick="removeRow(this)" title="Remove">−</button>
+                    </div>
+                </div>
+                <button type="button" class="add-btn" onclick="addRow('hack-section', 2)">+ Add Hackathon</button>
+
+                <!-- ===== CO-CURRICULAR ===== -->
+                <span class="title" style="margin-top:20px;">Co-curricular Activities</span>
+                <div id="cca-section">
+                    <div class="dyn-row">
+                        <div class="input-field" style="flex:1">
+                            <label>Activity 1</label>
+                            <input type="text" placeholder="e.g. President – IEEE Student Branch IIITA" name="cca1" value="<%= existing ? (existing.cca1||'') : '' %>">
+                        </div>
+                        <button type="button" class="remove-btn" onclick="removeRow(this)" title="Remove">−</button>
+                    </div>
+                    <div class="dyn-row" style="<%= (existing && existing.cca2) ? '' : 'display:none' %>">
+                        <div class="input-field" style="flex:1">
+                            <label>Activity 2</label>
+                            <input type="text" placeholder="e.g. Member – Robotics Club" name="cca2" value="<%= existing ? (existing.cca2||'') : '' %>">
+                        </div>
+                        <button type="button" class="remove-btn" onclick="removeRow(this)" title="Remove">−</button>
+                    </div>
+                    <div class="dyn-row" style="<%= (existing && existing.cca3) ? '' : 'display:none' %>">
+                        <div class="input-field" style="flex:1">
+                            <label>Activity 3</label>
+                            <input type="text" placeholder="Activity 3" name="cca3" value="<%= existing ? (existing.cca3||'') : '' %>">
+                        </div>
+                        <button type="button" class="remove-btn" onclick="removeRow(this)" title="Remove">−</button>
+                    </div>
+                    <div class="dyn-row" style="<%= (existing && existing.cca4) ? '' : 'display:none' %>">
+                        <div class="input-field" style="flex:1">
+                            <label>Activity 4</label>
+                            <input type="text" placeholder="Activity 4" name="cca4" value="<%= existing ? (existing.cca4||'') : '' %>">
+                        </div>
+                        <button type="button" class="remove-btn" onclick="removeRow(this)" title="Remove">−</button>
+                    </div>
+                    <div class="dyn-row" style="<%= (existing && existing.cca5) ? '' : 'display:none' %>">
+                        <div class="input-field" style="flex:1">
+                            <label>Activity 5</label>
+                            <input type="text" placeholder="Activity 5" name="cca5" value="<%= existing ? (existing.cca5||'') : '' %>">
+                        </div>
+                        <button type="button" class="remove-btn" onclick="removeRow(this)" title="Remove">−</button>
+                    </div>
+                </div>
+                <button type="button" class="add-btn" onclick="addRow('cca-section', 5)">+ Add Activity</button>
+
+                <!-- ===== INTERNSHIPS ===== -->
+                <span class="title" style="margin-top:20px;">Internships</span>
+                <p class="form-note" style="margin-bottom:8px;">Fill details for each internship. Click "Add Internship" to add more (max 2).</p>
+
+                <% var iParsed = []; %>
+                <% var iKeys = ['i1','i2']; %>
+                <% for(var ii=0; ii<iKeys.length; ii++){ %>
+                <%   var ival = existing ? (existing[iKeys[ii]] || '') : ''; %>
+                <%   var ip = ival ? ival.split('/') : []; %>
+                <%   iParsed.push({ company: ip[0]||'', duration: ip[1]||'', role: ip[2]||'', has: !!ival }); %>
+                <% } %>
+
+                <div id="intern-section">
+                    <% for(var ii=0; ii<2; ii++){ %>
+                    <div class="proj-row" style="<%= (ii===0 || iParsed[ii].has) ? '' : 'display:none' %>">
+                        <div class="proj-row-label">Internship <%= ii+1 %></div>
+                        <div class="fields">
+                            <div class="input-field">
+                                <label>Interned At</label>
+                                <input type="text" placeholder="e.g. Google India" name="i<%= ii+1 %>_company" value="<%= iParsed[ii].company %>">
+                            </div>
+                            <div class="input-field">
+                                <label>Duration</label>
+                                <input type="text" placeholder="e.g. May–Jul 2024" name="i<%= ii+1 %>_duration" value="<%= iParsed[ii].duration %>">
+                            </div>
+                            <div class="input-field">
+                                <label>Worked Upon</label>
+                                <input type="text" placeholder="e.g. Backend Development" name="i<%= ii+1 %>_role" value="<%= iParsed[ii].role %>">
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+                <button type="button" class="add-btn" onclick="addInternRow()">+ Add Internship</button>
+
+                <!-- ===== VERIFICATION ===== -->
+                <span class="title" style="margin-top:20px;">Verification Details <span style="color:#e53935;font-size:12px;">(required for admin review)</span></span>
+                <div class="fields">
+                    <div class="input-field" style="width:100%">
+                        <label>Reason for Changes *</label>
+                        <input type="text" placeholder="e.g. Added new internship at Google" name="reason" required>
+                    </div>
+                    <div class="input-field" style="width:100%">
+                        <label>Proof Link (Google Drive / URL)</label>
+                        <input type="text" placeholder="https://drive.google.com/..." name="doc">
+                    </div>
+                </div>
+
+                <% if(typeof pendingRequest !== 'undefined' && pendingRequest){ %>
+                <div class="pending-banner">
+                    <i class="uil uil-clock-three"></i>
+                    <div>
+                        <strong>You have a pending request</strong>
+                        <p>Submitted on <%= new Date(pendingRequest.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) %> — "<%= pendingRequest.reason %>"</p>
+                        <p style="font-size:11px;color:#888;">New submissions will replace the previous pending request.</p>
+                    </div>
+                </div>
+                <% } %>
+
+                <button class="sumbit" type="submit" onclick="return confirm('Submit non-academic details for admin verification?')">
+                    <span class="btnText">Submit for Verification</span>
+                    <i class="uil uil-navigator"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Generic show-next-hidden-row for single-input sections
+        function addRow(sectionId, maxRows) {
+            const section = document.getElementById(sectionId);
+            const rows = section.querySelectorAll('.dyn-row');
+            for (let i = 0; i < rows.length; i++) {
+                if (rows[i].style.display === 'none') {
+                    rows[i].style.display = '';
+                    rows[i].querySelector('input').focus();
+                    return;
+                }
+            }
+            const btn = section.nextElementSibling;
+            btn.textContent = 'Max entries reached';
+            btn.disabled = true;
+        }
+
+        // Remove a dynamic row and re-enable its add button
+        function removeRow(btn) {
+            const row = btn.closest('.dyn-row');
+            row.querySelector('input').value = '';
+            row.style.display = 'none';
+            // Re-enable the section's add button
+            const section = row.parentElement;
+            const addBtn = section.nextElementSibling;
+            if (addBtn && addBtn.classList.contains('add-btn')) {
+                addBtn.disabled = false;
+                addBtn.textContent = addBtn.textContent.replace('Max entries reached', '+ Add');
+            }
+        }
+
+        // Projects: show next hidden proj-row
+        function addProjRow() {
+            const section = document.getElementById('project-section');
+            const rows = section.querySelectorAll('.proj-row');
+            for (let i = 0; i < rows.length; i++) {
+                if (rows[i].style.display === 'none') {
+                    rows[i].style.display = '';
+                    rows[i].querySelector('input').focus();
+                    return;
+                }
+            }
+            const btn = section.nextElementSibling;
+            btn.textContent = 'Max 4 projects reached';
+            btn.disabled = true;
+        }
+
+        // Internships: show next hidden intern-row
+        function addInternRow() {
+            const section = document.getElementById('intern-section');
+            const rows = section.querySelectorAll('.proj-row');
+            for (let i = 0; i < rows.length; i++) {
+                if (rows[i].style.display === 'none') {
+                    rows[i].style.display = '';
+                    rows[i].querySelector('input').focus();
+                    return;
+                }
+            }
+            const btn = section.nextElementSibling;
+            btn.textContent = 'Max 2 internships reached';
+            btn.disabled = true;
+        }
+
+        // On submit: combine project sub-fields into p1, p2, ... and intern sub-fields into i1, i2
+        document.getElementById('nacadForm').addEventListener('submit', function(e) {
+            for (let i = 1; i <= 4; i++) {
+                const nameEl   = this.querySelector(`[name="p${i}_name"]`);
+                const techEl   = this.querySelector(`[name="p${i}_tech"]`);
+                const linkEl   = this.querySelector(`[name="p${i}_link"]`);
+                const nameVal  = nameEl ? nameEl.value.trim() : '';
+                const techVal  = techEl ? techEl.value.trim() : '';
+                const linkVal  = linkEl ? linkEl.value.trim() : '';
+                // Disable originals so they don't get submitted
+                if (nameEl) nameEl.disabled = true;
+                if (techEl) techEl.disabled = true;
+                if (linkEl) linkEl.disabled = true;
+                // Add combined hidden input
+                const hid = document.createElement('input');
+                hid.type = 'hidden';
+                hid.name = `p${i}`;
+                hid.value = nameVal ? `${nameVal}/${techVal}/${linkVal}` : '';
+                this.appendChild(hid);
+            }
+            for (let i = 1; i <= 2; i++) {
+                const compEl = this.querySelector(`[name="i${i}_company"]`);
+                const durEl  = this.querySelector(`[name="i${i}_duration"]`);
+                const roleEl = this.querySelector(`[name="i${i}_role"]`);
+                const compVal = compEl ? compEl.value.trim() : '';
+                const durVal  = durEl  ? durEl.value.trim()  : '';
+                const roleVal = roleEl ? roleEl.value.trim() : '';
+                if (compEl) compEl.disabled = true;
+                if (durEl)  durEl.disabled  = true;
+                if (roleEl) roleEl.disabled = true;
+                const hid = document.createElement('input');
+                hid.type = 'hidden';
+                hid.name = `i${i}`;
+                hid.value = compVal ? `${compVal}/${durVal}/${roleVal}` : '';
+                this.appendChild(hid);
+            }
+        });
+    </script>
+    <script src="/styles/sb.js"></script>
+
+</body>
+</html>

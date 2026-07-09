@@ -39,7 +39,6 @@
 - [Environment Variables](#environment-variables)
 - [Seed Data](#seed-data)
 - [API Routes](#api-routes)
-- [Screenshots](#screenshots)
 - [Security Features](#security-features)
 - [Future Enhancements](#future-enhancements)
 - [Contributors](#contributors)
@@ -293,18 +292,7 @@ The system uses **12 MySQL tables** with proper foreign key constraints and casc
 
 ### 4. AI Resume Analyzer
 
-**How It Works:**
-1. Student uploads resume PDF (max 2MB, PDF only) for a specific active drive
-2. PDF text is extracted using `pdf-parse`
-3. System attempts **Gemini 2.5 Flash Lite API** with a detailed prompt including:
-   - Role, company, package info
-   - Eligibility criteria
-   - Student's branch and CGPA
-   - Full resume text
-4. If Gemini responds within 12 seconds with valid JSON → uses AI response
-5. If quota exceeded / timeout / error → falls back to **local rule-based analysis**
-
-**Gemini AI Analysis Output:**
+**AI Analysis Output:**
 - **Score** (0-100): Role fit score
 - **Summary**: 2-3 sentence overall assessment
 - **Strengths**: Up to 5 specific strengths identified
@@ -313,15 +301,6 @@ The system uses **12 MySQL tables** with proper foreign key constraints and casc
 - **Role Fit Notes**: Up to 4 notes on company/role alignment
 - **Quick Fixes**: Up to 5 formatting/ATS tips
 
-**Local Fallback Analysis:**
-Rule-based scoring checking for:
-- Projects presence (+10)
-- Internship/experience (+8)
-- Skills section (+8)
-- Profile links (GitHub, LinkedIn, LeetCode) (+7)
-- Quantifiable metrics (+10)
-- Action verbs usage (+7)
-- Role-specific keyword matching (up to +15)
 
 **Role-Specific Keyword Sets:**
 | Role Category | Keywords Checked |
@@ -426,13 +405,6 @@ IIITA-Pfollio-main/
 │   ├── error.ejs                # Error message page
 │   ├── success.ejs              # Success message page
 │   └── nav.ejs                  # Legacy navbar (partial)
-│
-└── ss/                          # Screenshots for documentation
-    ├── Screenshot (60).png
-    ├── Screenshot (62).png
-    ├── Screenshot (63).png
-    ├── Screenshot (69).png
-    └── mail.png
 ```
 
 ---
@@ -458,14 +430,11 @@ npm install
 # 3. Create MySQL database
 mysql -u root -p -e "CREATE DATABASE portfolio;"
 
-# 4. Import schema and seed data
-mysql -u root -p portfolio < _portfolio_.sql
-
-# 5. Create .env file (see Environment Variables below)
+# 4. Create .env file (see Environment Variables below)
 cp .env.example .env
 # Edit .env with your credentials
 
-# 6. Start the server
+# 5. Start the server
 npm start
 # or for development with auto-reload:
 npx nodemon server.js
@@ -499,25 +468,6 @@ GEMINI_MODEL=gemini-2.5-flash-lite
 ```
 
 > **Note:** For Gmail, you need to enable 2FA and create an App Password at https://myaccount.google.com/apppasswords
-
----
-
-## Seed Data
-
-The SQL file includes pre-loaded test data for immediate testing:
-
-| Data | Details |
-|---|---|
-| **Admin** | `iec2022116@iiita.ac.in` / `Karthik@2004` |
-| **5 ECE Students** | `iec2022001` to `iec2022005` / password: `12345678` |
-| **5 IT Students** | `iit2022001` to `iit2022005` / password: `12345678` |
-| **2 IT-BI Students** | `iib2022001` to `iib2022002` / password: `12345678` |
-| **5 Companies** | Google, Microsoft, Texas Instruments, Flipkart, ISRO |
-| **5 Placement Drives** | Various roles with different eligibility criteria |
-| **4 Reviews** | Sample testimonials |
-
-All students have complete profiles with academic details, projects, skills, internships, and coding profiles.
-
 ---
 
 ## API Routes
@@ -594,16 +544,6 @@ All students have complete profiles with academic details, projects, skills, int
 | POST | `/notifications/read-all` | Mark all as read |
 
 ---
-
-## Screenshots
-
-| Page | Screenshot |
-|---|---|
-| Landing Page | ![Landing](ss/Screenshot%20(60).png) |
-| Student Dashboard | ![Dashboard](ss/Screenshot%20(62).png) |
-| Admin Dashboard | ![Admin](ss/Screenshot%20(63).png) |
-| Placement Drives | ![Placements](ss/Screenshot%20(69).png) |
-| Email Notification | ![Mail](ss/mail.png) |
 
 ---
 
